@@ -68,6 +68,7 @@ function calculateMutationPoss(windowSlice) {
 
 // Example usage:
 export function main(randomGenome) {
+	console.log("asd");
 	const result = windowPropagation(randomGenome, windowSize);
 	console.log("result:", result);
 }

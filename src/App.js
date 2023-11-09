@@ -6,15 +6,21 @@ import RandomSequence from "./components/RandomSequence";
 import { main } from "./helpers/fooGenomeElements";
 
 function App() {
-	const { generateRandomGenome, randomGenome } = useContext(SequenceContext);
+	const {
+		generateRandomGenome,
+		randomGenome,
+		generatePossibilityMap,
+		possibilityMap,
+	} = useContext(SequenceContext);
 	useEffect(() => {
 		console.log("1");
 		generateRandomGenome();
 	}, []);
 
 	useEffect(() => {
-		main(randomGenome);
+		generatePossibilityMap();
 	}, [randomGenome]);
+
 	return (
 		<div className="App">
 			<RandomSequence />
