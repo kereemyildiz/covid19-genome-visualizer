@@ -3,7 +3,6 @@ import "./App.css";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 import { SequenceContext } from "./contexts/GenomeContext";
 import RandomSequence from "./components/RandomSequence";
-import { createArrayOfDictionaries } from "./data/possibilityMap";
 import { main } from "./helpers/fooGenomeElements";
 
 function App() {

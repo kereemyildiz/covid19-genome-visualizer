@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { nucleotides, windowSize } from "../constants/constantVars";
-import { createArrayOfDictionaries } from "../data/possibilityMap";
 
 // parameters: None
 // objective: generates 30k long random strain
