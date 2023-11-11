@@ -1,13 +1,13 @@
-import React, { useContext } from "react";
-import { SequenceContext } from "../contexts/GenomeContext";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const RandomSequence = () => {
-	const { randomGenome } = useContext(SequenceContext);
+	const randomSeq = useSelector((state) => state.genome.randomSeq);
 
 	return (
 		<div>
 			<h2>Random Genome:</h2>
-			<pre>{JSON.stringify(randomGenome)}</pre>
+			<pre>{JSON.stringify(randomSeq)}</pre>
 		</div>
 	);
 };

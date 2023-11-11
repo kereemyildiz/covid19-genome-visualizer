@@ -19,31 +19,31 @@ export function fooModelOutputGenerator(kmerFeatures = null) {
 	const randomNumber = Math.random();
 	return parseFloat(randomNumber.toFixed(2));
 }
-function windowPropagation(randomGenome2, windowLength) {
-	const arrayOfDictionaries = randomGenome2.map((nucleotide, index) => {
+function windowPropagation(randomGenome, windowLength) {
+	const possibilityMap = randomGenome.map((nucleotide, index) => {
 		let windowSlice = [];
 		if (index === 0) {
-			windowSlice = randomGenome2.slice(index, index + windowLength - 2);
+			windowSlice = randomGenome.slice(index, index + windowLength - 2);
 			windowSlice.unshift("-");
 			windowSlice.unshift("-");
 		} else if (index === 1) {
-			windowSlice = randomGenome2.slice(index - 1, index + windowLength - 2);
+			windowSlice = randomGenome.slice(index - 1, index + windowLength - 2);
 			windowSlice.unshift("-");
 		} else if (index === 2) {
-			windowSlice = randomGenome2.slice(index - 2, index + windowLength - 2);
-		} else if (index === randomGenome2.length - 2) {
-			windowSlice = randomGenome2.slice(index - 2, index + windowLength - 2);
+			windowSlice = randomGenome.slice(index - 2, index + windowLength - 2);
+		} else if (index === randomGenome.length - 2) {
+			windowSlice = randomGenome.slice(index - 2, index + windowLength - 2);
 			windowSlice.push("-");
-		} else if (index === randomGenome2.length - 1) {
-			windowSlice = randomGenome2.slice(index - 2, index + windowLength - 2);
+		} else if (index === randomGenome.length - 1) {
+			windowSlice = randomGenome.slice(index - 2, index + windowLength - 2);
 			windowSlice.push("-");
 			windowSlice.push("-");
 		} else {
-			windowSlice = randomGenome2.slice(index - 2, index + windowLength - 2);
+			windowSlice = randomGenome.slice(index - 2, index + windowLength - 2);
 		}
 
 		// windowSlice feature extract
-
+		console.log("windowSlice:", windowSlice);
 		const mutationPoss = calculateMutationPoss(windowSlice);
 
 		return {
@@ -53,7 +53,7 @@ function windowPropagation(randomGenome2, windowLength) {
 		};
 	});
 
-	return arrayOfDictionaries;
+	return possibilityMap;
 }
 
 function calculateMutationPoss(windowSlice) {
@@ -68,6 +68,6 @@ function calculateMutationPoss(windowSlice) {
 
 // Example usage:
 export function main(randomGenome) {
-	const result = windowPropagation(randomGenome, windowSize);
-	console.log("result:", result);
+	const possibilityMap = windowPropagation(randomGenome, windowSize);
+	console.log("result:", possibilityMap);
 }
