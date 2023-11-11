@@ -3,7 +3,7 @@ import { nucleotides, windowSize } from "../constants/constantVars";
 // parameters: None
 // objective: generates 30k long random strain
 // return: 30k length long array
-export function generateRandomSequence(length = 30000) {
+export function generateRandomSequence(length = 500) {
 	const randomSequence = Array.from(
 		{ length },
 		() => nucleotides[Math.floor(Math.random() * nucleotides.length)]
@@ -43,7 +43,6 @@ function windowPropagation(randomGenome, windowLength) {
 		}
 
 		// windowSlice feature extract
-		console.log("windowSlice:", windowSlice);
 		const mutationPoss = calculateMutationPoss(windowSlice);
 
 		return {
@@ -70,4 +69,5 @@ function calculateMutationPoss(windowSlice) {
 export function main(randomGenome) {
 	const possibilityMap = windowPropagation(randomGenome, windowSize);
 	console.log("result:", possibilityMap);
+	return possibilityMap;
 }

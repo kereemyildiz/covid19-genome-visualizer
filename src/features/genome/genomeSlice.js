@@ -11,7 +11,6 @@ export const genomeSlice = createSlice({
 	initialState,
 	reducers: {
 		generate: (state) => {
-			console.log("run");
 			state.randomSeq = generateRandomSequence();
 			state.possibilityMap = main(state.randomSeq);
 		},
