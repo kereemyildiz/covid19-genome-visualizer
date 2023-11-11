@@ -13,13 +13,14 @@ function BarChart({ data }) {
 			const ctx = currentChartRef.getContext("2d");
 
 			if (ctx) {
-				const labels = data.map((entry) => entry.pos);
+				const labels = data.map((entry) => `${entry.pos}-${entry.nucleotide}`);
 				const datasets = Object.keys(data[0].mutationPoss).map(
 					(nucleotide) => ({
 						label: nucleotide,
 						data: data.map((entry) => entry.mutationPoss[nucleotide]),
-						borderColor: getRandomColor(),
-						backgroundColor: getRandomColor(),
+						borderColor: getColorForNucleotide(nucleotide),
+						backgroundColor: getColorForNucleotide(nucleotide),
+						stack: "stack", // Add this line to stack the bars
 					})
 				);
 
@@ -33,7 +34,7 @@ function BarChart({ data }) {
 						scales: {
 							y: {
 								beginAtZero: true,
-								max: 1,
+								max: 3,
 							},
 						},
 						plugins: {
@@ -65,13 +66,17 @@ function BarChart({ data }) {
 	return <canvas ref={chartRef} />;
 }
 
-function getRandomColor() {
-	const letters = "0123456789ABCDEF";
-	let color = "#";
-	for (let i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
+function getColorForNucleotide(nucleotide) {
+	// Define colors for A, C, T, G
+	const colorMap = {
+		A: "#FF5733", // Replace with your color for A
+		C: "#3399FF", // Replace with your color for C
+		T: "#33CC33", // Replace with your color for T
+		G: "#9966FF", // Replace with your color for G
+	};
+
+	// Return the color for the given nucleotide
+	return colorMap[nucleotide] || "#000000"; // Default to black if color not found
 }
 
 export default BarChart;
