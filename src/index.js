@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { GenomeProvider } from "./contexts/GenomeContext";
+import { Provider } from "react-redux";
+import { store } from "./states/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-	<GenomeProvider>
+	<Provider store={store}>
 		<App />
-	</GenomeProvider>
+	</Provider>
 );
