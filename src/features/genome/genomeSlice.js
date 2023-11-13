@@ -16,7 +16,6 @@ export const genomeSlice = createSlice({
 			const output = main(state.randomSeq);
 			state.possibilityMap = output[0];
 			state.windowSlices = output[1];
-			console.log("wwwwwwwwwwwwwww:", output);
 		},
 	},
 });

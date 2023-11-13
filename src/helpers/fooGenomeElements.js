@@ -23,6 +23,9 @@ export function fooModelOutputGenerator(kmerFeatures = null) {
 	const randomNumber = Math.random();
 	return parseFloat(randomNumber.toFixed(2));
 }
+
+// this function is hardcoded for windowSize=5 for now...
+// TODO: refactor this function
 function windowPropagation(randomGenome, windowLength) {
 	const windowSliceArr = [];
 	const possibilityMap = randomGenome.map((nucleotide, index) => {
