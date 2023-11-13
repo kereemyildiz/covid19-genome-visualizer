@@ -4,6 +4,7 @@ import { generateRandomSequence, main } from "../../helpers/fooGenomeElements";
 const initialState = {
 	randomSeq: null,
 	possibilityMap: null,
+	windowSlices: null,
 };
 
 export const genomeSlice = createSlice({
@@ -11,12 +12,13 @@ export const genomeSlice = createSlice({
 	initialState,
 	reducers: {
 		generate: (state) => {
-			console.log("run");
 			state.randomSeq = generateRandomSequence();
-			state.possibilityMap = main(state.randomSeq);
+			const output = main(state.randomSeq);
+			state.possibilityMap = output[0];
+			state.windowSlices = output[1];
 		},
 	},
 });
 
-export const { generate } = genomeSlice.actions;
+export const { generate, addWindowSlice } = genomeSlice.actions;
 export default genomeSlice.reducer;

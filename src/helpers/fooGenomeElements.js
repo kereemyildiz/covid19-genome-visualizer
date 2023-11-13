@@ -1,9 +1,13 @@
-import { nucleotides, windowSize } from "../constants/constantVars";
+import {
+	nucleotides,
+	windowSize,
+	sequenceLength,
+} from "../constants/constantVars";
 
 // parameters: None
 // objective: generates 30k long random strain
 // return: 30k length long array
-export function generateRandomSequence(length = 30000) {
+export function generateRandomSequence(length = sequenceLength) {
 	const randomSequence = Array.from(
 		{ length },
 		() => nucleotides[Math.floor(Math.random() * nucleotides.length)]
@@ -19,7 +23,11 @@ export function fooModelOutputGenerator(kmerFeatures = null) {
 	const randomNumber = Math.random();
 	return parseFloat(randomNumber.toFixed(2));
 }
+
+// this function is hardcoded for windowSize=5 for now...
+// TODO: refactor this function
 function windowPropagation(randomGenome, windowLength) {
+	const windowSliceArr = [];
 	const possibilityMap = randomGenome.map((nucleotide, index) => {
 		let windowSlice = [];
 		if (index === 0) {
@@ -41,10 +49,11 @@ function windowPropagation(randomGenome, windowLength) {
 		} else {
 			windowSlice = randomGenome.slice(index - 2, index + windowLength - 2);
 		}
-
+		windowSliceArr.push(windowSlice);
 		// windowSlice feature extract
-		console.log("windowSlice:", windowSlice);
 		const mutationPoss = calculateMutationPoss(windowSlice);
+
+		console.log("window_slice: ", windowSlice);
 
 		return {
 			pos: index,
@@ -53,7 +62,7 @@ function windowPropagation(randomGenome, windowLength) {
 		};
 	});
 
-	return possibilityMap;
+	return [possibilityMap, windowSliceArr];
 }
 
 function calculateMutationPoss(windowSlice) {
@@ -68,6 +77,10 @@ function calculateMutationPoss(windowSlice) {
 
 // Example usage:
 export function main(randomGenome) {
-	const possibilityMap = windowPropagation(randomGenome, windowSize);
+	const [possibilityMap, windowSliceArr] = windowPropagation(
+		randomGenome,
+		windowSize
+	);
 	console.log("result:", possibilityMap);
+	return [possibilityMap, windowSliceArr];
 }
