@@ -48,6 +48,10 @@ function BarChart({ data }) {
 									},
 									mode: "x",
 								},
+								pan: {
+									enabled: true,
+									mode: "x",
+								},
 							},
 						},
 					},
