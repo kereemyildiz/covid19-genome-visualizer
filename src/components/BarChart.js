@@ -37,6 +37,8 @@ function BarChart({ data }) {
 								max: 3,
 							},
 						},
+						responsive: true,
+						maintainAspectRatio: false,
 						plugins: {
 							zoom: {
 								zoom: {
@@ -67,20 +69,22 @@ function BarChart({ data }) {
 		}
 	}, [data]);
 
-	return <canvas ref={chartRef} />;
+	return (
+		<div className="absolute  w-2/3 h-1/2">
+			<canvas ref={chartRef} />;
+		</div>
+	);
 }
 
 function getColorForNucleotide(nucleotide) {
-	// Define colors for A, C, T, G
 	const colorMap = {
-		A: "#FF5733", // Replace with your color for A
-		C: "#3399FF", // Replace with your color for C
-		T: "#33CC33", // Replace with your color for T
-		G: "#9966FF", // Replace with your color for G
+		A: "#FF5733",
+		C: "#3399FF",
+		T: "#33CC33",
+		G: "#9966FF",
 	};
 
-	// Return the color for the given nucleotide
-	return colorMap[nucleotide] || "#000000"; // Default to black if color not found
+	return colorMap[nucleotide] || "#000000";
 }
 
 export default BarChart;
