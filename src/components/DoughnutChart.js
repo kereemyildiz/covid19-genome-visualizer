@@ -1,7 +1,10 @@
 import React from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Chart, Doughnut } from "react-chartjs-2";
+import { useDispatch } from "react-redux";
+import { changeDataset } from "../features/genome/genomeSlice";
 
 const DoughnutChart = ({ data }) => {
+	const dispatch = useDispatch();
 	const totalSum = Object.values(data).reduce((acc, curr) => acc + curr, 0);
 
 	const percentages = {};
@@ -46,6 +49,7 @@ const DoughnutChart = ({ data }) => {
 
 	const chartOptions = {
 		responsive: true,
+		maintainAspectRatio: true,
 		plugins: {
 			legend: {
 				position: "top",
@@ -54,6 +58,15 @@ const DoughnutChart = ({ data }) => {
 				display: true,
 				text: "Mutation Probability (Normalized)",
 			},
+		},
+		onClick: (event, elements) => {
+			if (elements[0]) {
+				const clickedIndex = elements[0].index;
+				const clickedLabel = chartData.labels[clickedIndex];
+				const clickedKey = Object.keys(percentages)[clickedIndex];
+				console.log("Clicked key:", clickedKey);
+				dispatch(changeDataset(clickedKey));
+			}
 		},
 	};
 
