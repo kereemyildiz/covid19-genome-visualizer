@@ -34,7 +34,7 @@ function BarChart({ data }) {
 						scales: {
 							y: {
 								beginAtZero: true,
-								max: 3,
+								max: 4,
 							},
 						},
 						responsive: true,
@@ -69,11 +69,7 @@ function BarChart({ data }) {
 		}
 	}, [data]);
 
-	return (
-		<div className="absolute  w-2/3 h-1/2">
-			<canvas ref={chartRef} />;
-		</div>
-	);
+	return <canvas ref={chartRef} />;
 }
 
 function getColorForNucleotide(nucleotide) {

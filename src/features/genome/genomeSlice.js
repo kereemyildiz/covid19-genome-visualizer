@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { generateRandomSequence, main } from "../../helpers/fooGenomeElements";
+import {
+	generateRandomSequence,
+	main,
+	generateProteinRegionPossibility,
+} from "../../helpers/fooGenomeElements";
 
 const initialState = {
 	randomSeq: null,
 	possibilityMap: null,
 	windowSlices: null,
+	proteinRegionPossMap: null,
 };
 
 export const genomeSlice = createSlice({
@@ -14,8 +19,10 @@ export const genomeSlice = createSlice({
 		generate: (state) => {
 			state.randomSeq = generateRandomSequence();
 			const output = main(state.randomSeq);
-			state.possibilityMap = output[0];
+			const _possMap = output[0];
+			state.possibilityMap = _possMap;
 			state.windowSlices = output[1];
+			state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
 		},
 	},
 });
