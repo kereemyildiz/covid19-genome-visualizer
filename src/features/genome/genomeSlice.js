@@ -27,7 +27,7 @@ export const genomeSlice = createSlice({
 			state.windowSlices = output[1];
 			state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
 		},
-		changeDataset: (state, action) => {
+		showProteinRegion: (state, action) => {
 			const [start, end] = proteinRegions[action.payload]
 				.split("-")
 				.map((pos) => parseInt(pos));
@@ -41,5 +41,6 @@ export const genomeSlice = createSlice({
 	},
 });
 
-export const { generate, addWindowSlice, changeDataset } = genomeSlice.actions;
+export const { generate, addWindowSlice, showProteinRegion } =
+	genomeSlice.actions;
 export default genomeSlice.reducer;

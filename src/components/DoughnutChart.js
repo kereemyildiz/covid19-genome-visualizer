@@ -1,7 +1,7 @@
 import React from "react";
 import { Chart, Doughnut } from "react-chartjs-2";
 import { useDispatch } from "react-redux";
-import { changeDataset } from "../features/genome/genomeSlice";
+import { showProteinRegion } from "../features/genome/genomeSlice";
 
 const DoughnutChart = ({ data }) => {
 	const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const DoughnutChart = ({ data }) => {
 				data: Object.values(percentages),
 				backgroundColor: [
 					"rgba(255, 99, 132, 0.5)",
-					"rgba(54, 162, 235, 0.5)",
+					"rgba(54, 102, 235, 0.5)",
 					"rgba(255, 206, 86, 0.5)",
 					"rgba(75, 192, 192, 0.5)",
 					"rgba(153, 102, 255, 0.5)",
@@ -33,7 +33,7 @@ const DoughnutChart = ({ data }) => {
 				borderWidth: 1,
 				borderColor: [
 					"rgba(255, 99, 132, 1)",
-					"rgba(54, 162, 235, 1)",
+					"rgba(54, 102, 235, 1)",
 					"rgba(255, 206, 86, 1)",
 					"rgba(75, 192, 192, 1)",
 					"rgba(153, 102, 255, 1)",
@@ -65,7 +65,7 @@ const DoughnutChart = ({ data }) => {
 				const clickedLabel = chartData.labels[clickedIndex];
 				const clickedKey = Object.keys(percentages)[clickedIndex];
 				console.log("Clicked key:", clickedKey);
-				dispatch(changeDataset(clickedKey));
+				dispatch(showProteinRegion(clickedKey));
 			}
 		},
 	};
