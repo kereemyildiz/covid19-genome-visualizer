@@ -4,11 +4,15 @@ import { generate, setLoading } from "./features/genome/genomeSlice";
 import RandomSequence from "./components/RandomSequence";
 import BarChart from "./components/BarChart";
 import Spinner from "./components/Spinner";
+import PieChart from "./components/DoughnutChart";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
 	const possibilityMap = useSelector((state) => state.genome.possibilityMap);
+	const proteinRegionPossMap = useSelector(
+		(state) => state.genome.proteinRegionPossMap
+	);
 	const loading = useSelector((state) => state.genome.loading);
 	const windowSlices = useSelector((state) => state.genome.windowSlices);
 
@@ -64,8 +68,19 @@ function App() {
 										))}
 								</div>
 							</div>
-							<div className="flex justify-center ">
-								<BarChart data={possibilityMap} />
+							<div className="flex center">
+								<div
+									style={{
+										position: "relative",
+										height: "30vh",
+										width: "60vw",
+									}}
+								>
+									<BarChart data={possibilityMap} />
+								</div>
+								<div className="w-[400px] h-[400px]">
+									<PieChart data={proteinRegionPossMap} />
+								</div>
 							</div>
 						</>
 					) : (

@@ -34,9 +34,11 @@ function BarChart({ data }) {
 						scales: {
 							y: {
 								beginAtZero: true,
-								max: 3,
+								max: 4,
 							},
 						},
+						responsive: true,
+						maintainAspectRatio: false,
 						plugins: {
 							zoom: {
 								zoom: {
@@ -46,6 +48,10 @@ function BarChart({ data }) {
 									pinch: {
 										enabled: true,
 									},
+									mode: "x",
+								},
+								pan: {
+									enabled: true,
 									mode: "x",
 								},
 							},

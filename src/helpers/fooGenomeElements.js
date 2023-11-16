@@ -3,6 +3,7 @@ import {
 	windowSize,
 	sequenceLength,
 } from "../constants/constantVars";
+import { proteinRegions } from "../data/proteinRegions";
 
 // parameters: None
 // objective: generates 30k long random strain
@@ -53,8 +54,6 @@ function windowPropagation(randomGenome, windowLength) {
 		// windowSlice feature extract
 		const mutationPoss = calculateMutationPoss(windowSlice);
 
-		console.log("window_slice: ", windowSlice);
-
 		return {
 			pos: index,
 			nucleotide,
@@ -73,6 +72,40 @@ function calculateMutationPoss(windowSlice) {
 	}
 
 	return mutationPoss;
+}
+
+// input: mutationPoss and indexes
+// output: Sum of the mutation possibilities for each protein region
+// i.e: "S": 17,
+//      "ORF1a" : 23
+const calculateSumOfMutationProbability = (currentProteinRegion) => {
+	return currentProteinRegion.reduce((acc, curr) => {
+		const sum = Object.keys(curr.mutationPoss)
+			.filter((key) => key !== curr.nucleotide)
+			.reduce(
+				(acc, key) => parseFloat(acc) + parseFloat(curr.mutationPoss[key]),
+				0
+			)
+			.toFixed(2);
+		return (parseFloat(acc) + parseFloat(sum)).toFixed(2);
+	}, 0);
+};
+export function generateProteinRegionPossibility(data) {
+	console.log("protein region");
+	console.log("data: ", data);
+	console.log("map:", proteinRegions);
+	const proteinRegionPossMap = {};
+	for (const [proteinName, interval] of Object.entries(proteinRegions)) {
+		const [start, end] = interval.split("-").map((pos) => parseInt(pos));
+		const currentProteinRegion = data.slice(start, end + 1);
+		const prSum = parseFloat(
+			calculateSumOfMutationProbability(currentProteinRegion)
+		);
+
+		proteinRegionPossMap[proteinName] = prSum;
+	}
+	// console.log("proteinRegionPossMap:", proteinRegionPossMap);
+	return proteinRegionPossMap;
 }
 
 // Example usage:
