@@ -10,12 +10,13 @@ import PieChart from "./components/DoughnutChart";
 function App() {
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
 	const possibilityMap = useSelector((state) => state.genome.possibilityMap);
+	const barChartData = useSelector((state) => state.genome.chartData);
+
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
 	);
 	const loading = useSelector((state) => state.genome.loading);
 	const windowSlices = useSelector((state) => state.genome.windowSlices);
-
 	console.log("possMap:", possibilityMap);
 	console.log("loading:", loading);
 
@@ -68,15 +69,9 @@ function App() {
 										))}
 								</div>
 							</div>
-							<div className="flex center">
-								<div
-									style={{
-										position: "relative",
-										height: "30vh",
-										width: "60vw",
-									}}
-								>
-									<BarChart data={possibilityMap} />
+							<div className="flex justify-center gap-10 p-4">
+								<div className="w-[800px] h-[400px]">
+									<BarChart data={barChartData} />
 								</div>
 								<div className="w-[400px] h-[400px]">
 									<PieChart data={proteinRegionPossMap} />

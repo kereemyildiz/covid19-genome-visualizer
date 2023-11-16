@@ -38,7 +38,7 @@ function BarChart({ data }) {
 							},
 						},
 						responsive: true,
-						maintainAspectRatio: false,
+						maintainAspectRatio: true,
 						plugins: {
 							zoom: {
 								zoom: {
