@@ -5,6 +5,8 @@ import RandomSequence from "./components/RandomSequence";
 import BarChart from "./components/BarChart";
 import Spinner from "./components/Spinner";
 import PieChart from "./components/DoughnutChart";
+// import LargeDataSetChart from "./components/LineChart";
+import Test from "./components/Test";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -70,13 +72,15 @@ function App() {
 								</div>
 							</div>
 							<div className="flex justify-center gap-10 p-4">
-								<div className="w-[800px] h-[400px]">
+								{/* <div className="w-[800px] h-[400px]">
 									<BarChart data={barChartData} />
 								</div>
 								<div className="w-[400px] h-[400px]">
 									<PieChart data={proteinRegionPossMap} />
-								</div>
+								</div> */}
+								<Test />
 							</div>
+							{/* <LargeDataSetChart /> */}
 						</>
 					) : (
 						<div>

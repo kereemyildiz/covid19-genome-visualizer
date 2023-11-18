@@ -1,5 +1,5 @@
 import React from "react";
-import { Chart, Doughnut } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { useDispatch } from "react-redux";
 import { showProteinRegion } from "../features/genome/genomeSlice";
 import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";

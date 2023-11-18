@@ -58,6 +58,13 @@ function BarChart({ data }) {
 								pan: {
 									enabled: true,
 									mode: "x",
+									onPan: () => {
+										console.log("panned");
+										// const leftEnd =
+										// 	chart.getDatasetMeta(0).dataset._scale.chart.scales["x"]
+										// 		._table[0];
+										console.log(chart.getDatasetMeta(0));
+									},
 								},
 							},
 							title: {

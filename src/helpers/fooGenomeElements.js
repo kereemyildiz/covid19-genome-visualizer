@@ -91,9 +91,9 @@ const calculateSumOfMutationProbability = (currentProteinRegion) => {
 	}, 0);
 };
 export function generateProteinRegionPossibility(data) {
-	console.log("protein region");
-	console.log("data: ", data);
-	console.log("map:", proteinRegions);
+	// console.log("protein region");
+	// console.log("data: ", data);
+	// console.log("map:", proteinRegions);
 	const proteinRegionPossMap = {};
 	for (const [proteinName, interval] of Object.entries(proteinRegions)) {
 		const [start, end] = interval.split("-").map((pos) => parseInt(pos));
