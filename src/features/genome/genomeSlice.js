@@ -38,9 +38,12 @@ export const genomeSlice = createSlice({
 				(item) => item.pos >= start && item.pos <= end
 			);
 		},
+		resetChart: (state) => {
+			state.chartData = current(state).possibilityMap;
+		},
 	},
 });
 
-export const { generate, addWindowSlice, showProteinRegion } =
+export const { generate, addWindowSlice, showProteinRegion, resetChart } =
 	genomeSlice.actions;
 export default genomeSlice.reducer;
