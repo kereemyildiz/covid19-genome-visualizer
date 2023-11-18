@@ -12,6 +12,7 @@ const initialState = {
 	windowSlices: null,
 	proteinRegionPossMap: null,
 	chartData: null,
+	chartTitle: "Full Sequence",
 };
 
 export const genomeSlice = createSlice({
@@ -33,13 +34,14 @@ export const genomeSlice = createSlice({
 				.map((pos) => parseInt(pos));
 			const possMap = current(state).possibilityMap;
 			console.log(possMap);
-
+			state.chartTitle = action.payload;
 			state.chartData = possMap.filter(
 				(item) => item.pos >= start && item.pos <= end
 			);
 		},
 		resetChart: (state) => {
 			state.chartData = current(state).possibilityMap;
+			state.chartTitle = "Full Sequence";
 		},
 	},
 });

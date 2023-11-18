@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetChart } from "../features/genome/genomeSlice";
+import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
 Chart.register(zoomPlugin);
 
 function BarChart({ data }) {
 	const chartRef = useRef();
 	const dispatch = useDispatch();
+	const chartTitle = useSelector((state) => state.genome.chartTitle);
 
 	useEffect(() => {
 		const currentChartRef = chartRef.current;
@@ -56,6 +58,15 @@ function BarChart({ data }) {
 								pan: {
 									enabled: true,
 									mode: "x",
+								},
+							},
+							title: {
+								display: true,
+								color: proteinRegionColorMap[chartTitle],
+								position: "bottom",
+								text: chartTitle,
+								font: {
+									size: 16,
 								},
 							},
 						},
