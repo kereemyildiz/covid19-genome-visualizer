@@ -13,6 +13,7 @@ const initialState = {
 	proteinRegionPossMap: null,
 	chartData: null,
 	chartTitle: "Full Sequence",
+	isWholeSequenceSelected: true,
 };
 
 export const genomeSlice = createSlice({
@@ -38,9 +39,11 @@ export const genomeSlice = createSlice({
 			state.chartData = possMap.filter(
 				(item) => item.pos >= start && item.pos <= end
 			);
+			state.isWholeSequenceSelected = false;
 		},
 		resetChart: (state) => {
 			state.chartData = current(state).possibilityMap;
+			state.isWholeSequenceSelected = true;
 			state.chartTitle = "Full Sequence";
 		},
 	},

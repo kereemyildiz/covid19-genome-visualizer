@@ -7,6 +7,10 @@ import Spinner from "./components/Spinner";
 import PieChart from "./components/DoughnutChart";
 // import LargeDataSetChart from "./components/LineChart";
 import Test from "./components/Test";
+import Test2 from "./components/Test2";
+import { useState } from "react";
+import Test3 from "./components/Test3";
+import MyChart from "./components/Test4";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -17,15 +21,19 @@ function App() {
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
 	);
-	const loading = useSelector((state) => state.genome.loading);
+	// const loading = useSelector((state) => state.genome.loading);
 	const windowSlices = useSelector((state) => state.genome.windowSlices);
+
+	const [loading, setLoading] = useState(false);
 	console.log("possMap:", possibilityMap);
 	console.log("loading:", loading);
 
 	const dispatch = useDispatch();
 
 	const handleGenerate = () => {
+		setLoading(true);
 		dispatch(generate());
+		setLoading(false);
 	};
 	return (
 		<div className="App">
@@ -72,13 +80,15 @@ function App() {
 								</div>
 							</div>
 							<div className="flex justify-center gap-10 p-4">
-								{/* <div className="w-[800px] h-[400px]">
+								<div className="w-[800px] h-[400px]">
 									<BarChart data={barChartData} />
 								</div>
 								<div className="w-[400px] h-[400px]">
 									<PieChart data={proteinRegionPossMap} />
-								</div> */}
-								<Test />
+								</div>
+								{/* <Test /> */}
+								{/* <Test2 /> */}
+								{/* <Test3 /> */}
 							</div>
 							{/* <LargeDataSetChart /> */}
 						</>

@@ -4,31 +4,55 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetChart } from "../features/genome/genomeSlice";
 import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
+import { proteinRegions } from "../data/proteinRegions";
 Chart.register(zoomPlugin);
+
+function chunkAndAverageData(data, chunkSize) {
+	const chunkedData = [];
+	for (let i = 0; i < data.length; i += chunkSize) {
+		let chunk = data.slice(i, i + chunkSize);
+		let sum = chunk.reduce((acc, { A, T, G, C }) => acc + A + T + G + C, 0);
+		let avg = sum / chunkSize;
+		chunkedData.push(avg);
+	}
+	return chunkedData;
+}
 
 function BarChart({ data }) {
 	const chartRef = useRef();
 	const dispatch = useDispatch();
 	const chartTitle = useSelector((state) => state.genome.chartTitle);
+	const isWholeSequenceSelected = useSelector(
+		(state) => state.genome.isWholeSequenceSelected
+	);
 
 	useEffect(() => {
 		const currentChartRef = chartRef.current;
+		const chunkSize = 30;
+		const chunkedData = chunkAndAverageData(data, chunkSize);
 
 		if (currentChartRef) {
 			const ctx = currentChartRef.getContext("2d");
 
 			if (ctx) {
 				const labels = data.map((entry) => `${entry.pos}-${entry.nucleotide}`);
+				const labels2 = data.map(
+					(entry) => `${entry.pos}-${entry.nucleotide}-${entry.proteinRegion}`
+				);
+
 				const datasets = Object.keys(data[0].mutationPoss).map(
 					(nucleotide) => ({
 						label: nucleotide,
 						data: data.map((entry) => entry.mutationPoss[nucleotide]),
 						borderColor: getColorForNucleotide(nucleotide),
 						backgroundColor: getColorForNucleotide(nucleotide),
-						stack: "stack", // Add this line to stack the bars
+						stack: "stack",
 					})
 				);
 
+				// console.log("1111:");
+				// console.log(labels);
+				// console.log(datasets);
 				const chart = new Chart(ctx, {
 					type: "bar",
 					data: {
@@ -37,10 +61,62 @@ function BarChart({ data }) {
 					},
 					options: {
 						scales: {
+							x: {
+								id: "xAxis1",
+								type: "category",
+								ticks: {
+									callback: function (val, index) {
+										// Hide the label of every 2nd dataset
+										const label = this.getLabelForValue(val);
+										return label.split("-")[1];
+									},
+								},
+							},
+							x2: {
+								id: "xAxis2",
+								type: "category",
+								gridLines: {
+									display: false,
+								},
+								labels: labels2,
+								ticks: {
+									autoSkip: true,
+									callback: function (val, index) {
+										// Hide the label of every 2nd dataset
+										const pR = this.getLabelForValue(val).split("-")[2];
+										const index_ = this.getLabelForValue(val).split("-")[0];
+										// console.log(proteinRegions[pR.split(" ")[0].split("-")]);
+										const [start, end] =
+											proteinRegions[pR.split(" ")[0].split("-")].split("-");
+										const middle = parseInt(
+											(parseInt(start) + parseInt(end)) / 2
+										);
+										if (isWholeSequenceSelected) {
+											if (parseInt(index_) % 100 === 0) {
+												// console.log("YES");
+												return pR;
+											}
+										} else {
+											if (parseInt(index_) === middle) {
+												return pR;
+											}
+										}
+									},
+								},
+							},
+
 							y: {
 								beginAtZero: true,
 								max: 4,
 							},
+						},
+						tooltips: {
+							mode: "index",
+							intersect: false,
+						},
+						hover: {
+							mode: "index",
+							intersect: false,
 						},
 						responsive: true,
 						maintainAspectRatio: true,
@@ -54,6 +130,15 @@ function BarChart({ data }) {
 										enabled: true,
 									},
 									mode: "x",
+									onZoomComplete: (context) => {
+										console.log("AAAAAAAAAAAAAAAAA");
+										console.log(context.chart.getZoomLevel());
+										if (context.chart.getZoomLevel() >= 1.2) {
+											context.chart.data.datasets = datasets;
+											console.log("worked onzoomm");
+											context.chart.update();
+										}
+									},
 								},
 								pan: {
 									enabled: true,
@@ -63,7 +148,7 @@ function BarChart({ data }) {
 										// const leftEnd =
 										// 	chart.getDatasetMeta(0).dataset._scale.chart.scales["x"]
 										// 		._table[0];
-										console.log(chart.getDatasetMeta(0));
+										// console.log(chart.getDatasetMeta(0));
 									},
 								},
 							},
@@ -80,28 +165,19 @@ function BarChart({ data }) {
 					},
 				});
 
-				// Dispose of the chart when the component is unmounted
 				return () => chart.destroy();
-			} else {
-				console.error("getContext() returned null.");
 			}
-		} else {
-			console.error("chartRef.current is null or undefined.");
 		}
 	}, [data]);
 
 	const handleReset = () => {
 		dispatch(resetChart());
 	};
+
 	return (
 		<div>
-			<button
-				className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-				onClick={handleReset}
-			>
-				reset
-			</button>
-			<canvas ref={chartRef} />;
+			<button onClick={handleReset}>Reset</button>
+			<canvas ref={chartRef} />
 		</div>
 	);
 }

@@ -34,7 +34,7 @@ const DoughnutChart = ({ data }) => {
 			},
 			title: {
 				display: true,
-				text: "Mutation Probability (Normalized)",
+				text: "Mutation Probability",
 			},
 		},
 		onClick: (event, elements) => {
