@@ -54,28 +54,7 @@ function windowPropagation(randomGenome, windowLength) {
 		// windowSlice feature extract
 		const mutationPoss = calculateMutationPoss(windowSlice);
 
-		let proteinRegion = "";
-		if (index <= 399) {
-			proteinRegion = "ORF1ab protein";
-		} else if (index >= 400 && index <= 459) {
-			proteinRegion = "S protein";
-		} else if (index >= 460 && index <= 510) {
-			proteinRegion = "ORF3a protein";
-		} else if (index >= 511 && index <= 600) {
-			proteinRegion = "E protein";
-		} else if (index >= 601 && index <= 630) {
-			proteinRegion = "M protein";
-		} else if (index >= 631 && index <= 699) {
-			proteinRegion = "ORF6 protein";
-		} else if (index >= 700 && index <= 799) {
-			proteinRegion = "ORF7a protein";
-		} else if (index >= 800 && index <= 849) {
-			proteinRegion = "ORF8 protein";
-		} else if (index >= 850 && index <= 899) {
-			proteinRegion = "N protein";
-		} else if (index >= 900 && index <= 999) {
-			proteinRegion = "ORF10 protein";
-		}
+		let proteinRegion = determineProteinRegion(index);
 
 		return {
 			pos: index,
@@ -86,6 +65,16 @@ function windowPropagation(randomGenome, windowLength) {
 	});
 
 	return [possibilityMap, windowSliceArr];
+}
+
+function determineProteinRegion(index) {
+	for (const [protein, range] of Object.entries(proteinRegions)) {
+		const [start, end] = range.split("-").map(Number);
+
+		if (index >= start && index <= end) {
+			return `${protein} protein`;
+		}
+	}
 }
 
 function calculateMutationPoss(windowSlice) {
@@ -116,11 +105,12 @@ const calculateSumOfMutationProbability = (currentProteinRegion) => {
 };
 export function generateProteinRegionPossibility(data) {
 	// console.log("protein region");
-	// console.log("data: ", data);
+	// console.log("data2: ", data);
 	// console.log("map:", proteinRegions);
 	const proteinRegionPossMap = {};
 	for (const [proteinName, interval] of Object.entries(proteinRegions)) {
 		const [start, end] = interval.split("-").map((pos) => parseInt(pos));
+		const length = end - start;
 		const currentProteinRegion = data.slice(start, end + 1);
 		const prSum = parseFloat(
 			calculateSumOfMutationProbability(currentProteinRegion)
@@ -138,6 +128,6 @@ export function main(randomGenome) {
 		randomGenome,
 		windowSize
 	);
-	console.log("result:", possibilityMap);
+	// console.log("result:", possibilityMap);
 	return [possibilityMap, windowSliceArr];
 }
