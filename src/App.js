@@ -11,6 +11,7 @@ import Test2 from "./components/Test2";
 import { useState } from "react";
 import Test3 from "./components/Test3";
 import MyChart from "./components/Test4";
+import { proteinRegionsSize } from "./data/proteinRegions";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -25,9 +26,9 @@ function App() {
 	const windowSlices = useSelector((state) => state.genome.windowSlices);
 
 	const [loading, setLoading] = useState(false);
-	console.log("possMap:", possibilityMap);
-	console.log("loading:", loading);
-
+	// console.log("possMap:", possibilityMap);
+	// console.log("loading:", loading);
+	// console.log("prororoor:", proteinRegionsSize);
 	const dispatch = useDispatch();
 
 	const handleGenerate = () => {
@@ -39,7 +40,7 @@ function App() {
 		<div className="App">
 			{loading ? (
 				<div>
-					{console.log("123")}
+					{/* {console.log("123")} */}
 					<Spinner />
 				</div>
 			) : (
@@ -63,7 +64,7 @@ function App() {
 									{windowSlices
 										.filter((item, idx) => idx < 10)
 										.map((item, idx) => (
-											<div>
+											<div key={idx}>
 												<pre>{JSON.stringify(item)}</pre>
 											</div>
 										))}
@@ -72,8 +73,8 @@ function App() {
 								<div className="flex flex-col">
 									{possibilityMap
 										.filter((item) => item.pos < 10)
-										.map((item) => (
-											<div>
+										.map((item, idx) => (
+											<div key={idx}>
 												<pre>{JSON.stringify(item)}</pre>
 											</div>
 										))}
