@@ -5,6 +5,7 @@ import {
 	generateProteinRegionPossibility,
 } from "../../helpers/fooGenomeElements";
 import { proteinRegions } from "../../data/proteinRegions";
+import { chunkAndAverageData } from "../../utils/dataConverter";
 
 const initialState = {
 	randomSeq: null,
@@ -14,6 +15,7 @@ const initialState = {
 	chartData: null,
 	chartTitle: "Full Sequence",
 	isWholeSequenceSelected: true,
+	chunkedData: null,
 };
 
 export const genomeSlice = createSlice({
@@ -26,6 +28,7 @@ export const genomeSlice = createSlice({
 			const _possMap = output[0];
 			state.possibilityMap = _possMap;
 			state.chartData = _possMap;
+			state.chunkedData = chunkAndAverageData(_possMap, 30);
 			state.windowSlices = output[1];
 			state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
 		},

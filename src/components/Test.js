@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import Chart from "chart.js/auto";
-import "chartjs-adapter-date-fns"; // Import the date adapter
 import "chartjs-plugin-zoom";
 
 const ZoomChart = () => {
@@ -10,7 +9,7 @@ const ZoomChart = () => {
 	useEffect(() => {
 		const zoomOptions = {
 			limits: {
-				x: { min: "original", max: "original", minRange: 60 * 1000 },
+				x: { min: 0, max: 3000 },
 			},
 			pan: {
 				enabled: true,
@@ -22,9 +21,6 @@ const ZoomChart = () => {
 				wheel: {
 					enabled: true,
 				},
-				drag: {
-					enabled: true,
-				},
 				pinch: {
 					enabled: true,
 				},
@@ -33,97 +29,52 @@ const ZoomChart = () => {
 			},
 		};
 
-		const start = new Date().valueOf();
-		const end = start + 1000 * 60 * 60 * 24 * 2;
-		const allData = [];
-		let y = 100;
-
-		for (let x = start; x <= end; x += 1000) {
-			y += 5 - Math.random() * 10;
-			allData.push({ x, y });
-		}
-
-		function fetchData(x1, x2) {
-			const step = Math.max(1, Math.round((x2 - x1) / 100000));
-			const data = [];
-			let i = 0;
-
-			while (i < allData.length && allData[i].x < x1) {
-				i++;
-			}
-
-			while (i < allData.length && allData[i].x <= x2) {
-				data.push(allData[i]);
-				i += step;
-			}
-			return data;
-		}
-
+		const generateData = () => {
+			return Array.from({ length: 3000 }, (_, i) => ({
+				x: i,
+				y: Math.floor(Math.random() * 11),
+			}));
+		};
+		const takeData = (min, max) => {
+			console.log("min-max: ", min, max);
+		};
 		function startFetch({ chart }) {
 			const { min, max } = chart.scales.x;
+			console.log(chart.scales.x);
 			clearTimeout(timer);
 			timer = setTimeout(() => {
 				console.log("Fetched data between " + min + " and " + max);
-				chart.data.datasets[0].data = fetchData(min, max);
-				chart.stop(); // make sure animations are not running
-				chart.update("none");
+				// chart.data.datasets[0].data = takeData(min, max);
+				// chart.stop(); // make sure animations are not running
+				// chart.update("none");
 			}, 500);
 		}
 
 		const config = {
-			type: "line",
+			type: "bar",
 			data: {
 				datasets: [
 					{
-						label: "My First dataset",
-						borderColor: "red",
-						backgroundColor: "rgba(255, 0, 0, 0.1)",
-						pointBorderColor: "blue",
-						pointBackgroundColor: "rgba(0, 0, 255, 0.5)",
-						pointBorderWidth: 1,
-						data: fetchData(start, end),
+						label: "Random Data",
+						backgroundColor: "rgba(75, 192, 192, 0.2)",
+						borderColor: "rgba(75, 192, 192, 1)",
+						borderWidth: 1,
+						data: generateData(),
 					},
 				],
 			},
 			options: {
 				scales: {
 					x: {
+						type: "linear",
 						position: "bottom",
-						min: start,
-						max: end,
-						type: "time",
-						ticks: {
-							autoSkip: true,
-							autoSkipPadding: 50,
-							maxRotation: 0,
-						},
-						time: {
-							displayFormats: {
-								hour: "HH:mm",
-								minute: "HH:mm",
-								second: "HH:mm:ss",
-							},
-						},
 					},
 					y: {
-						type: "linear",
-						position: "left",
+						beginAtZero: true,
 					},
 				},
 				plugins: {
 					zoom: zoomOptions,
-					title: {
-						display: true,
-						position: "bottom",
-						text: "Zoom Status Placeholder",
-					},
-				},
-				transitions: {
-					zoom: {
-						animation: {
-							duration: 100,
-						},
-					},
 				},
 			},
 		};

@@ -12,12 +12,15 @@ import { useState } from "react";
 import Test3 from "./components/Test3";
 import MyChart from "./components/Test4";
 import { proteinRegionsSize } from "./data/proteinRegions";
+import Test5 from "./components/Test5";
+import BarChartManager from "./components/BarChartManager";
+// import NewTest from "./components/NewTest";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
 	const possibilityMap = useSelector((state) => state.genome.possibilityMap);
-	const barChartData = useSelector((state) => state.genome.chartData);
+	// const barChartData = useSelector((state) => state.genome.chartData);
 
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
@@ -37,6 +40,7 @@ function App() {
 		setLoading(false);
 	};
 	return (
+		// <NewTest />
 		<div className="App">
 			{loading ? (
 				<div>
@@ -56,7 +60,7 @@ function App() {
 					</div>
 					{randomSeq ? (
 						<>
-							{console.log("seq: ", randomSeq)}
+							{/* {console.log("seq: ", randomSeq)} */}
 							<RandomSequence />
 							<br />
 							<div className="flex justify-center">
@@ -81,12 +85,10 @@ function App() {
 								</div>
 							</div>
 							<div className="flex justify-center gap-10 p-4">
-								<div className="w-[800px] h-[400px]">
-									<BarChart data={barChartData} />
-								</div>
-								<div className="w-[400px] h-[400px]">
+								<BarChartManager />
+								{/* <div className="w-[400px] h-[400px]">
 									<PieChart data={proteinRegionPossMap} />
-								</div>
+								</div> */}
 								{/* <Test /> */}
 								{/* <Test2 /> */}
 								{/* <Test3 /> */}
