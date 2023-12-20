@@ -16,8 +16,31 @@ function BarChart({
 	chartTitle,
 }) {
 	// console.log("barchartdata: ", data);
-	console.log("render barchart");
+	console.log("render barchart:", data[0].data);
+	const a = data[0].data;
 	const chartRef = useRef();
+	const [_chart, setChart] = useState(null);
+	const [change, setChange] = useState(false);
+	const [wholeData, setWholeData] = useState(data[0].data);
+	const totalDataPoints = 30000;
+	// const initialLoad = 1000;
+
+	const fetchData = (start, end) => {
+		return wholeData.slice(start, end);
+		// return Array.from({ length: end - start }, (_, i) => ({
+		// 	x: start + i,
+		// 	y: Math.random() * 10, // Replace with actual data logic
+		// }));
+	};
+
+	const updateChartData = (chart, min, max) => {
+		const newData = fetchData(min, Math.min(max, totalDataPoints));
+		console.log("new data:", newData);
+		chart.data.datasets[0].data = newData;
+		chart.update();
+		setChange((_) => !_);
+	};
+
 	// const dispatch = useDispatch();
 	// const [chunkView, setChunkView] = useState(true);
 	// const chartTitle = useSelector((state) => state.genome.chartTitle);
@@ -74,7 +97,7 @@ function BarChart({
 						// labels: chunkView
 						// 	? chunkedData.map((_, idx) => `Chunk ${idx + 1}`)
 						// 	: labels,
-						// labels: labels,
+						labels: labels,
 						datasets: data,
 					},
 					options: {
@@ -87,7 +110,7 @@ function BarChart({
 								// labels: chunkView
 								// 	? chunkedData.map((_, idx) => `Chunk ${idx + 1}`)
 								// 	: labels,
-								labels: labels,
+								// labels: labels,
 								// ticks: {
 								// 	callback: function (val, index) {
 								// 		// Hide the label of every 2nd dataset
@@ -102,7 +125,7 @@ function BarChart({
 								gridLines: {
 									display: false,
 								},
-								labels: labels2,
+								// labels: labels2,
 								// ticks: {
 								// 	autoSkip: true,
 								// 	callback: function (val, index) {
@@ -158,9 +181,21 @@ function BarChart({
 										enabled: true,
 									},
 									mode: "x",
-									onZoomComplete: (context) => {
-										console.log("AAAAAAAAAAAAAAAAA");
-										console.log(context.chart.getZoomLevel());
+									onZoom: ({ chart }) => {
+										console.log("on zoom");
+										const { min, max } = chart.scales.x;
+										console.log("min,max:", min, max);
+										updateChartData(chart, min, max);
+										// console.log("AAAAAAAAAAAAAAAAA");
+										// console.log(context.chart.getZoomLevel());
+										// console.log(context.chart.zoom);
+										// console.log(
+										// 	"a:",
+										// 	context.chart.scales.x.min,
+										// 	context.chart.scales.x.max
+										// );
+
+										// context.chart.zoomScale(1, { min: 0, max: 100 }, "none");
 
 										// if (context.chart.getZoomLevel() >= 1.4) {
 										// 	setChunkView((_) => false); // Switch to detailed view
@@ -178,8 +213,17 @@ function BarChart({
 								pan: {
 									enabled: true,
 									mode: "x",
-									onPan: () => {
-										console.log("panned");
+									onPan: ({ chart }) => {
+										console.log("on pan");
+										const { min, max } = chart.scales.x;
+										console.log("min,max:", min, max);
+										updateChartData(chart, min, max);
+										// console.log("panned");
+										// console.log(
+										// 	"a:",
+										// 	context.chart.scales.x.min,
+										// 	context.chart.scales.x.max
+										// );
 										// const leftEnd =
 										// 	chart.getDatasetMeta(0).dataset._scale.chart.scales["x"]
 										// 		._table[0];
@@ -199,6 +243,7 @@ function BarChart({
 						},
 					},
 				});
+				setChart(chart);
 
 				return () => chart.destroy();
 			}
