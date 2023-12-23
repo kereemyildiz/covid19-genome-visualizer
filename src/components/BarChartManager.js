@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BarChart from "./BarChart";
+import BarChartNew from "./DynamicChartV3";
 
 export default function BarChartManager() {
 	console.log("render barchart manager");
@@ -39,13 +40,7 @@ export default function BarChartManager() {
 	const labels_chunk = chunkedData.map((chunk, idx) => `Chunk-${idx}`);
 	return (
 		<div className="w-[800px] h-[400px]">
-			<BarChart
-				data={chunkedDatasets}
-				labels={labels_chunk}
-				isWholeSequenceSelected={isWholeSequenceSelected}
-				setChunkView={setChunkView}
-				chartTitle={chartTitle}
-			/>
+			<BarChartNew data={chunkedDatasets} />
 		</div>
 	);
 }

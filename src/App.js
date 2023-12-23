@@ -14,8 +14,14 @@ import MyChart from "./components/Test4";
 import { proteinRegionsSize } from "./data/proteinRegions";
 import Test5 from "./components/Test5";
 import BarChartManager from "./components/BarChartManager";
+import LazyLoadingChart from "./components/DynamicLoadTry";
+import DynamicChart from "./components/DynamicLoadTryV2";
 // import NewTest from "./components/NewTest";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
+const _data = Array.from({ length: 30000 }, (_, i) => ({
+	x: i,
+	y: parseInt(Math.random() * 10), // Replace with actual data logic
+}));
 
 function App() {
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
@@ -41,6 +47,7 @@ function App() {
 	};
 	return (
 		// <NewTest />
+		// <DynamicChart data={_data} />
 		<div className="App">
 			{loading ? (
 				<div>

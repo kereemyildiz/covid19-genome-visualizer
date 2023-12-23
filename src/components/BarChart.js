@@ -22,23 +22,32 @@ function BarChart({
 	const [_chart, setChart] = useState(null);
 	const [change, setChange] = useState(false);
 	const [wholeData, setWholeData] = useState(data[0].data);
+	const [wholeLabels, setWholeLabels] = useState(labels);
+	const [dataPoints, setDataPoints] = useState(data[0].data);
+
+	const [viewWindow, setViewWindow] = useState({ start: 0, end: 1000 });
 	const totalDataPoints = 30000;
 	// const initialLoad = 1000;
+	console.log("whole labels:", wholeLabels);
 
-	const fetchData = (start, end) => {
-		return wholeData.slice(start, end);
-		// return Array.from({ length: end - start }, (_, i) => ({
-		// 	x: start + i,
-		// 	y: Math.random() * 10, // Replace with actual data logic
-		// }));
-	};
+	useEffect(() => {
+		const fetchData = () => {
+			setDataPoints(data.slice(viewWindow.start, viewWindow.end));
+		};
+		fetchData();
+	}, [viewWindow]);
 
-	const updateChartData = (chart, min, max) => {
-		const newData = fetchData(min, Math.min(max, totalDataPoints));
-		console.log("new data:", newData);
-		chart.data.datasets[0].data = newData;
-		chart.update();
-		setChange((_) => !_);
+	const dataset = {
+		labels: dataPoints.map((_, i) => i + viewWindow.start),
+		datasets: [
+			{
+				label: "Dataset",
+				data: dataPoints,
+				backgroundColor: "rgba(255, 99, 132, 0.2)",
+				borderColor: "rgba(255, 99, 132, 1)",
+				borderWidth: 1,
+			},
+		],
 	};
 
 	// const dispatch = useDispatch();
@@ -119,41 +128,41 @@ function BarChart({
 								// 	},
 								// },
 							},
-							x2: {
-								id: "xAxis2",
-								type: "category",
-								gridLines: {
-									display: false,
-								},
-								// labels: labels2,
-								// ticks: {
-								// 	autoSkip: true,
-								// 	callback: function (val, index) {
-								// 		// Hide the label of every 2nd dataset
-								// 		const pR = this.getLabelForValue(val).split("-")[2];
-								// 		// console.log("pR", pR);
-								// 		const index_ = parseInt(
-								// 			this.getLabelForValue(val).split("-")[0]
-								// 		);
-								// 		// console.log(proteinRegions[pR.split(" ")[0].split("-")]);
-								// 		const [start, end] =
-								// 			proteinRegions[pR.split(" ")[0].split("-")].split("-");
-								// 		const middle = parseInt(
-								// 			(parseInt(start) + parseInt(end)) / 2
-								// 		);
-								// 		if (isWholeSequenceSelected) {
-								// 			if (index_ % 100 === 0 && index_ !== 0) {
-								// 				// console.log("YES");
-								// 				return pR;
-								// 			}
-								// 		} else {
-								// 			if (index_ === middle) {
-								// 				return pR;
-								// 			}
-								// 		}
-								// 	},
-								// },
-							},
+							// x2: {
+							// 	id: "xAxis2",
+							// 	type: "category",
+							// 	gridLines: {
+							// 		display: false,
+							// 	},
+							// 	// labels: labels2,
+							// 	// ticks: {
+							// 	// 	autoSkip: true,
+							// 	// 	callback: function (val, index) {
+							// 	// 		// Hide the label of every 2nd dataset
+							// 	// 		const pR = this.getLabelForValue(val).split("-")[2];
+							// 	// 		// console.log("pR", pR);
+							// 	// 		const index_ = parseInt(
+							// 	// 			this.getLabelForValue(val).split("-")[0]
+							// 	// 		);
+							// 	// 		// console.log(proteinRegions[pR.split(" ")[0].split("-")]);
+							// 	// 		const [start, end] =
+							// 	// 			proteinRegions[pR.split(" ")[0].split("-")].split("-");
+							// 	// 		const middle = parseInt(
+							// 	// 			(parseInt(start) + parseInt(end)) / 2
+							// 	// 		);
+							// 	// 		if (isWholeSequenceSelected) {
+							// 	// 			if (index_ % 100 === 0 && index_ !== 0) {
+							// 	// 				// console.log("YES");
+							// 	// 				return pR;
+							// 	// 			}
+							// 	// 		} else {
+							// 	// 			if (index_ === middle) {
+							// 	// 				return pR;
+							// 	// 			}
+							// 	// 		}
+							// 	// 	},
+							// 	// },
+							// },
 
 							y: {
 								beginAtZero: true,
@@ -181,11 +190,17 @@ function BarChart({
 										enabled: true,
 									},
 									mode: "x",
+									onZoomStart: ({ chart, event, point }) => {
+										console.log("chart.scales.x;");
+										console.log(chart.scales.x);
+									},
 									onZoom: ({ chart }) => {
 										console.log("on zoom");
 										const { min, max } = chart.scales.x;
 										console.log("min,max:", min, max);
-										updateChartData(chart, min, max);
+										// updateScaleRange(chart);
+
+										// updateChartData(chart, min, max);
 										// console.log("AAAAAAAAAAAAAAAAA");
 										// console.log(context.chart.getZoomLevel());
 										// console.log(context.chart.zoom);
@@ -217,7 +232,9 @@ function BarChart({
 										console.log("on pan");
 										const { min, max } = chart.scales.x;
 										console.log("min,max:", min, max);
-										updateChartData(chart, min, max);
+										// updateScaleRange(chart);
+
+										// updateChartData(chart, min, max);
 										// console.log("panned");
 										// console.log(
 										// 	"a:",
@@ -249,6 +266,11 @@ function BarChart({
 			}
 		}
 	}, [data]);
+
+	// useEffect(() => {
+	// 	console.log("Current range:", scaleRange);
+	// 	console.log("Previous range:", prevScaleRange);
+	// }, [scaleRange, prevScaleRange]);
 
 	const handleReset = () => {
 		setChunkView(true);

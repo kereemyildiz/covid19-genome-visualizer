@@ -2,6 +2,10 @@ import React, { useRef, useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-zoom";
 
+const data = Array.from({ length: 30000 }, (_, i) => ({
+	x: i + i,
+	y: Math.random() * 10, // Replace with actual data logic
+}));
 const LazyLoadingChart = () => {
 	const chartContainer = useRef(null);
 	const [chart, setChart] = useState(null);
@@ -10,10 +14,7 @@ const LazyLoadingChart = () => {
 
 	// Function to generate a subset of data
 	const fetchData = (start, end) => {
-		return Array.from({ length: end - start }, (_, i) => ({
-			x: start + i,
-			y: Math.random() * 10, // Replace with actual data logic
-		}));
+		return data.slice(start, end);
 	};
 
 	// Function to update the chart with new data
