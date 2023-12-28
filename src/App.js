@@ -6,11 +6,11 @@ import BarChart from "./components/BarChart";
 import Spinner from "./components/Spinner";
 import PieChart from "./components/DoughnutChart";
 // import LargeDataSetChart from "./components/LineChart";
-import Test from "./components/Test";
-import Test2 from "./components/Test2";
+// import Test from "./components/Test";
+// import Test2 from "./components/Test2";
 import { useState } from "react";
-import Test3 from "./components/Test3";
-import MyChart from "./components/Test4";
+// import Test3 from "./components/Test3";
+// import MyChart from "./components/Test4";
 import { proteinRegionsSize } from "./data/proteinRegions";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
