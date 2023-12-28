@@ -14,6 +14,8 @@ const initialState = {
 	chartData: null,
 	chartTitle: "Full Sequence",
 	isWholeSequenceSelected: true,
+	elapsedDay: null,
+	nodeId: null,
 };
 
 export const genomeSlice = createSlice({
@@ -41,6 +43,13 @@ export const genomeSlice = createSlice({
 			);
 			state.isWholeSequenceSelected = false;
 		},
+		selectNode: (state, action) => {
+			const [node, elapsedDay] = action.payload;
+			state.nodeId = node;
+			state.elapsedDay = elapsedDay;
+			console.log("node:", node);
+			console.log("elapsed day:", elapsedDay);
+		},
 		resetChart: (state) => {
 			state.chartData = current(state).possibilityMap;
 			state.isWholeSequenceSelected = true;
@@ -49,6 +58,11 @@ export const genomeSlice = createSlice({
 	},
 });
 
-export const { generate, addWindowSlice, showProteinRegion, resetChart } =
-	genomeSlice.actions;
+export const {
+	generate,
+	addWindowSlice,
+	showProteinRegion,
+	resetChart,
+	selectNode,
+} = genomeSlice.actions;
 export default genomeSlice.reducer;
