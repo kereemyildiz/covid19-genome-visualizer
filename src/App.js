@@ -87,11 +87,7 @@ function App() {
 								<div className="w-[400px] h-[400px]">
 									<PieChart data={proteinRegionPossMap} />
 								</div>
-								{/* <Test /> */}
-								{/* <Test2 /> */}
-								{/* <Test3 /> */}
 							</div>
-							{/* <LargeDataSetChart /> */}
 						</>
 					) : (
 						<div>
