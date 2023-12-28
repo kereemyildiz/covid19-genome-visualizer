@@ -7,18 +7,18 @@ import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
 import { proteinRegions } from "../data/proteinRegions";
 Chart.register(zoomPlugin);
 
-function chunkAndAverageData(data, chunkSize) {
-	const chunkedData = [];
-	for (let i = 0; i < data.length; i += chunkSize) {
-		let chunk = data.slice(i, i + chunkSize);
-		let sum = chunk
-			.map((item) => item["mutationPoss"])
-			.reduce((acc, { A, T, G, C }) => acc + A + T + G + C, 0);
-		let avg = parseFloat((sum / chunkSize).toFixed(2));
-		chunkedData.push(avg);
-	}
-	return chunkedData;
-}
+// function chunkAndAverageData(data, chunkSize) {
+// 	const chunkedData = [];
+// 	for (let i = 0; i < data.length; i += chunkSize) {
+// 		let chunk = data.slice(i, i + chunkSize);
+// 		let sum = chunk
+// 			.map((item) => item["mutationPoss"])
+// 			.reduce((acc, { A, T, G, C }) => acc + A + T + G + C, 0);
+// 		let avg = parseFloat((sum / chunkSize).toFixed(2));
+// 		chunkedData.push(avg);
+// 	}
+// 	return chunkedData;
+// }
 
 function BarChart({ data }) {
 	// console.log("barchartdata: ", data);
@@ -26,28 +26,51 @@ function BarChart({ data }) {
 	const dispatch = useDispatch();
 	const [chunkView, setChunkView] = useState(true);
 	const chartTitle = useSelector((state) => state.genome.chartTitle);
+	const [_chart, setChart] = useState(null);
 	const isWholeSequenceSelected = useSelector(
 		(state) => state.genome.isWholeSequenceSelected
 	);
 
+	const decimateData = (data, factor) => {
+		console.log("dtaaaa", data);
+		return data.reduce((acc, _, index) => {
+			if (index % factor === 0) {
+				const slice = data.slice(index, index + factor);
+				const averaged = slice.reduce((avg, curr) => {
+					Object.keys(curr.mutationPoss).forEach((key) => {
+						avg[key] = (avg[key] || 0) + curr.mutationPoss[key] / factor;
+					});
+					return avg;
+				}, {});
+				acc.push({
+					pos: index / factor,
+					nucleotide: "",
+					mutationPoss: averaged,
+				});
+			}
+			return acc;
+		}, []);
+	};
 	useEffect(() => {
 		const currentChartRef = chartRef.current;
-		const chunkSize = 5;
-		const chunkedData = chunkAndAverageData(data, chunkSize);
+		const decimatedData = decimateData(data, 30); // Adjust factor as needed
 
-		const chunkedDatasets = [
-			{
-				label: "Average Data",
-				data: chunkedData,
-				backgroundColor: "rgba(0, 123, 255, 0.5)", // or any color you prefer
-			},
-		];
-		console.log("chunked data: ", chunkedData);
+		// const chunkSize = 5;
+		// const chunkedData = chunkAndAverageData(data, chunkSize);
 
-		const detailedDatasets = Object.keys(data[0].mutationPoss).map(
+		// const chunkedDatasets = [
+		// 	{
+		// 		label: "Average Data",
+		// 		data: chunkedData,
+		// 		backgroundColor: "rgba(0, 123, 255, 0.5)", // or any color you prefer
+		// 	},
+		// ];
+		// console.log("chunked data: ", chunkedData);
+
+		const datasets = Object.keys(decimatedData[0].mutationPoss).map(
 			(nucleotide) => ({
 				label: nucleotide,
-				data: data.map((entry) => entry.mutationPoss[nucleotide]),
+				data: decimatedData.map((entry) => entry.mutationPoss[nucleotide]),
 				borderColor: getColorForNucleotide(nucleotide),
 				backgroundColor: getColorForNucleotide(nucleotide),
 				// stack: "stack",
@@ -58,12 +81,14 @@ function BarChart({ data }) {
 			const ctx = currentChartRef.getContext("2d");
 
 			if (ctx) {
-				const labels = data.map((entry) => `${entry.pos}-${entry.nucleotide}`);
-				const labels2 = data.map(
-					(entry) => `${entry.pos}-${entry.nucleotide}-${entry.proteinRegion}`
+				const labels = decimatedData.map(
+					(entry) => `${entry.pos}-${entry.nucleotide}`
 				);
+				// const labels2 = data.map(
+				// 	(entry) => `${entry.pos}-${entry.nucleotide}-${entry.proteinRegion}`
+				// );
 
-				const labels_chunk = chunkedData.map((chunk, idx) => `Chunk-${idx}`);
+				// const labels_chunk = chunkedData.map((chunk, idx) => `Chunk-${idx}`);
 
 				// const datasets =
 
@@ -73,10 +98,8 @@ function BarChart({ data }) {
 				const chart = new Chart(ctx, {
 					type: "bar",
 					data: {
-						labels: chunkView
-							? chunkedData.map((_, idx) => `Chzunk ${idx + 1}`)
-							: labels,
-						datasets: chunkView ? chunkedDatasets : detailedDatasets,
+						labels: labels,
+						datasets: datasets,
 					},
 					options: {
 						animation: false,
@@ -85,52 +108,50 @@ function BarChart({ data }) {
 								id: "xAxis1",
 								type: "category",
 								stacked: true,
-								labels: chunkView
-									? chunkedData.map((_, idx) => `Chunk ${idx + 1}`)
-									: labels,
-								ticks: {
-									callback: function (val, index) {
-										// Hide the label of every 2nd dataset
-										const label = this.getLabelForValue(val);
-										return label.split("-")[1];
-									},
-								},
+								labels: labels,
+								// ticks: {
+								// 	callback: function (val, index) {
+								// 		// Hide the label of every 2nd dataset
+								// 		const label = this.getLabelForValue(val);
+								// 		return label.split("-")[1];
+								// 	},
+								// },
 							},
-							x2: {
-								id: "xAxis2",
-								type: "category",
-								gridLines: {
-									display: false,
-								},
-								labels: labels2,
-								ticks: {
-									autoSkip: true,
-									callback: function (val, index) {
-										// Hide the label of every 2nd dataset
-										const pR = this.getLabelForValue(val).split("-")[2];
-										// console.log("pR", pR);
-										const index_ = parseInt(
-											this.getLabelForValue(val).split("-")[0]
-										);
-										// console.log(proteinRegions[pR.split(" ")[0].split("-")]);
-										const [start, end] =
-											proteinRegions[pR.split(" ")[0].split("-")].split("-");
-										const middle = parseInt(
-											(parseInt(start) + parseInt(end)) / 2
-										);
-										if (isWholeSequenceSelected) {
-											if (index_ % 100 === 0 && index_ !== 0) {
-												// console.log("YES");
-												return pR;
-											}
-										} else {
-											if (index_ === middle) {
-												return pR;
-											}
-										}
-									},
-								},
-							},
+							// x2: {
+							// 	id: "xAxis2",
+							// 	type: "category",
+							// 	gridLines: {
+							// 		display: false,
+							// 	},
+							// 	labels: labels2,
+							// 	ticks: {
+							// 		autoSkip: true,
+							// 		// callback: function (val, index) {
+							// 		// 	// Hide the label of every 2nd dataset
+							// 		// 	const pR = this.getLabelForValue(val).split("-")[2];
+							// 		// 	// console.log("pR", pR);
+							// 		// 	const index_ = parseInt(
+							// 		// 		this.getLabelForValue(val).split("-")[0]
+							// 		// 	);
+							// 		// 	// console.log(proteinRegions[pR.split(" ")[0].split("-")]);
+							// 		// 	const [start, end] =
+							// 		// 		proteinRegions[pR.split(" ")[0].split("-")].split("-");
+							// 		// 	const middle = parseInt(
+							// 		// 		(parseInt(start) + parseInt(end)) / 2
+							// 		// 	);
+							// 		// 	if (isWholeSequenceSelected) {
+							// 		// 		if (index_ % 100 === 0 && index_ !== 0) {
+							// 		// 			// console.log("YES");
+							// 		// 			return pR;
+							// 		// 		}
+							// 		// 	} else {
+							// 		// 		if (index_ === middle) {
+							// 		// 			return pR;
+							// 		// 		}
+							// 		// 	}
+							// 		// },
+							// 	},
+							// },
 
 							y: {
 								beginAtZero: true,
@@ -158,21 +179,21 @@ function BarChart({ data }) {
 										enabled: true,
 									},
 									mode: "x",
-									onZoomComplete: (context) => {
-										console.log("AAAAAAAAAAAAAAAAA");
-										console.log(context.chart.getZoomLevel());
-										if (context.chart.getZoomLevel() >= 1.4) {
-											setChunkView((_) => false); // Switch to detailed view
+									// onZoomComplete: (context) => {
+									// 	console.log("AAAAAAAAAAAAAAAAA");
+									// 	console.log(context.chart.getZoomLevel());
+									// 	if (context.chart.getZoomLevel() >= 1.4) {
+									// 		setChunkView((_) => false); // Switch to detailed view
 
-											context.chart.data.datasets = detailedDatasets;
-											console.log("worked onzoomm");
-											context.chart.update();
-										} else {
-											setChunkView((_) => true);
-											context.chart.data.datasets = chunkedDatasets;
-											context.chart.update();
-										}
-									},
+									// 		context.chart.data.datasets = detailedDatasets;
+									// 		console.log("worked onzoomm");
+									// 		context.chart.update();
+									// 	} else {
+									// 		setChunkView((_) => true);
+									// 		context.chart.data.datasets = chunkedDatasets;
+									// 		context.chart.update();
+									// 	}
+									// },
 								},
 								pan: {
 									enabled: true,
@@ -198,6 +219,7 @@ function BarChart({ data }) {
 						},
 					},
 				});
+				setChart(chart);
 
 				return () => chart.destroy();
 			}
@@ -213,6 +235,28 @@ function BarChart({ data }) {
 		<div>
 			<button onClick={handleReset}>Reset</button>
 			<canvas ref={chartRef} />
+			<div className="flex">
+				<button
+					className="border-4 border-gray-400 m-2 p-2"
+					onClick={(e) => {
+						console.log(_chart);
+						_chart.zoom(1.1);
+					}}
+				>
+					{" "}
+					+
+				</button>
+				<button
+					className="border-4 border-gray-400 m-2 p-2"
+					onClick={(e) => {
+						console.log(_chart);
+						_chart.zoom(0.9);
+					}}
+				>
+					{" "}
+					-
+				</button>
+			</div>
 		</div>
 	);
 }
