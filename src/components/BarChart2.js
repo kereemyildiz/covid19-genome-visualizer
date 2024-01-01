@@ -35,12 +35,13 @@ function BarChart2({ data, seq }) {
 	// };
 
 	useEffect(() => {
-		const labels = seq.slice(0, 1000);
+		const labels = seq;
+		// const labels = seq.slice(0, 1000);
 		let dataset = [];
-		for (const row of data) {
-			dataset.push(row.slice(0, 1000).map((num) => parseFloat(num)));
-		}
-		console.log("dataset:", dataset);
+		// for (const row of data) {
+		// 	dataset.push(row.slice(0, 1000).map((num) => parseFloat(num)));
+		// }
+		// console.log("dataset:", dataset);
 		const currentChartRef = chartRef.current;
 		// const decimatedData = decimateData(data, 30); // Adjust factor as needed
 
@@ -54,7 +55,7 @@ function BarChart2({ data, seq }) {
 		// 	})
 		// );
 		let idx = -1;
-		const datasets = dataset.map((data) => {
+		const datasets = data.map((data) => {
 			idx += 1;
 			console.log("111data:", data);
 			return {
@@ -148,6 +149,7 @@ function BarChart2({ data, seq }) {
 	return (
 		<div>
 			<button onClick={handleReset}>Reset</button>
+			<button onClick={() => setClick(!click)}> asd</button>
 			<canvas ref={chartRef} />
 			<div className="flex">
 				<button

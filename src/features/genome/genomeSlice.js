@@ -47,7 +47,7 @@ export const genomeSlice = createSlice({
 			for (const row of data) {
 				console.log("girdi");
 				console.log("row:", row[0]);
-				dataset.push(row[0]);
+				dataset.push(row[0].map((n) => parseFloat(n)));
 			}
 			state.realChartData = dataset;
 		},
