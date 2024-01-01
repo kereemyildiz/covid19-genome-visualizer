@@ -1,11 +1,12 @@
+import { Spinner } from "@material-tailwind/react";
 import React from "react";
 
-function Spinner() {
+const LoadingSpinner = () => {
 	return (
-		<div>
-			<h1>SPINNER</h1>
+		<div className="grid h-screen place-items-center">
+			<Spinner color="blue" className="h-8 w-8" />
 		</div>
 	);
-}
+};
 
-export default Spinner;
+export default LoadingSpinner;

@@ -1,18 +1,34 @@
 import React, { useState } from "react";
-import { nodeIds } from "../data/nodeIds";
-import { useDispatch } from "react-redux";
-import { selectNode } from "../features/genome/genomeSlice";
-import { Option, Select, Button, Input } from "@material-tailwind/react";
+import { nodeIds as nodes } from "../data/nodeIds";
+import { modelList } from "../data/modelList";
+import { useDispatch, useSelector } from "react-redux";
+import {
+	Option,
+	Select as Select2,
+	Button,
+	Input,
+} from "@material-tailwind/react";
 import { MdOutlineCreate } from "react-icons/md";
-function Navbar() {
+import Select from "react-select";
+import LoadingSpinner from "./Spinner";
+
+function Navbar({ onNodeSelect, onSubmit }) {
+	const nodeIds = useSelector((state) => state.genome.nodeList);
 	const dispatch = useDispatch();
 	const [_nodeId, setNodeId] = useState(null);
 	const [_elapsedDay, setElapsedDay] = useState(null);
-	const handleSubmit = (e) => {
+	const [selectedModel, setSelectedModel] = useState(null);
+
+	if (!nodeIds) {
+		return <LoadingSpinner />;
+	}
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("runned");
-		dispatch(selectNode([_nodeId, _elapsedDay]));
+		onNodeSelect(_nodeId, _elapsedDay, selectedModel);
+		onSubmit(_nodeId, _elapsedDay, selectedModel);
 	};
+
 	return (
 		<div className="flex flex-col items-center sm:flex-row mt-2 justify-center ">
 			<form onSubmit={handleSubmit}>
@@ -21,21 +37,38 @@ function Navbar() {
 						htmlFor="nodeId"
 						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
 					>
-						Node Id
+						Model
 					</label>
-					<Select
+					<Select2
 						onChange={(value) => {
-							setNodeId(value);
+							setSelectedModel(value);
 						}}
-						label="Select Node Id"
-						name="nodeId"
+						label="Select Model"
+						name="model"
 					>
-						{nodeIds.map((node, index) => (
-							<Option key={index} value={node}>
-								{node}
+						{modelList.map((model, index) => (
+							<Option key={index} value={model}>
+								{model}
 							</Option>
 						))}
-					</Select>
+					</Select2>
+				</div>
+				<div className="flex flex-col px-2 pt-2 items-start w-[470px] sm:w-[440px] ">
+					<label
+						htmlFor="nodeId"
+						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
+					>
+						Node Id
+					</label>
+
+					<Select
+						placeholder="Select Node Id"
+						className="w-[440px]"
+						options={nodes.map((opt) => ({ label: opt, value: opt }))}
+						onChange={(opt) => {
+							setNodeId(opt.value);
+						}}
+					/>
 				</div>
 				<div className="flex">
 					<div className="flex px-2 pt-2 flex-col items-start">
