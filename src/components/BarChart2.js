@@ -33,11 +33,22 @@ function BarChart2({ data, seq }) {
 	// 		return acc;
 	// 	}, []);
 	// };
+	const decimateData = (data, factor) => {
+		return data.map((dataset) =>
+			dataset.reduce((acc, curr, index) => {
+				if (index % factor === 0) {
+					const slice = dataset.slice(index, index + factor);
+					const sum = slice.reduce((sum, value) => sum + value, 0);
+					acc.push(sum / factor);
+				}
+				return acc;
+			}, [])
+		);
+	};
 
 	useEffect(() => {
-		const labels = seq;
-		// const labels = seq.slice(0, 1000);
-		let dataset = [];
+		const decimatedData = decimateData(data, 30); // Adjust factor as needed
+		const labels = seq.slice(0, decimatedData[0].length);
 		// for (const row of data) {
 		// 	dataset.push(row.slice(0, 1000).map((num) => parseFloat(num)));
 		// }
@@ -45,26 +56,13 @@ function BarChart2({ data, seq }) {
 		const currentChartRef = chartRef.current;
 		// const decimatedData = decimateData(data, 30); // Adjust factor as needed
 
-		// const datasets = Object.keys(decimatedData[0].mutationPoss).map(
-		// 	(nucleotide) => ({
-		// 		label: nucleotide,
-		// 		data: decimatedData.map((entry) => entry.mutationPoss[nucleotide]),
-		// 		borderColor: getColorForNucleotide(nucleotide),
-		// 		backgroundColor: getColorForNucleotide(nucleotide),
-		// 		// stack: "stack",
-		// 	})
-		// );
 		let idx = -1;
-		const datasets = data.map((data) => {
-			idx += 1;
-			console.log("111data:", data);
-			return {
-				label: nucleotides[idx],
-				data: data,
-				borderColor: getColorForNucleotide(nucleotides[idx]),
-				backgroundColor: getColorForNucleotide(nucleotides[idx]),
-			};
-		});
+		const datasets = decimatedData.map((dataset, idx) => ({
+			label: nucleotides[idx],
+			data: dataset,
+			borderColor: getColorForNucleotide(nucleotides[idx]),
+			backgroundColor: getColorForNucleotide(nucleotides[idx]),
+		}));
 		console.log("datasets:", datasets);
 		console.log("labels", labels);
 

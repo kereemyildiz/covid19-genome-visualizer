@@ -3,6 +3,7 @@ import {
 	generateRandomSequence,
 	main,
 	generateProteinRegionPossibility,
+	generateProteinRegionPossibility2,
 } from "../../helpers/fooGenomeElements";
 import { proteinRegions } from "../../data/proteinRegions";
 
@@ -23,6 +24,7 @@ const initialState = {
 	nodeList: null,
 	seq: null,
 	realChartData: null,
+	proteinRegionPossMap2: null,
 };
 
 export const genomeSlice = createSlice({
@@ -50,6 +52,7 @@ export const genomeSlice = createSlice({
 				dataset.push(row[0].map((n) => parseFloat(n)));
 			}
 			state.realChartData = dataset;
+			state.proteinRegionPossMap2 = generateProteinRegionPossibility2(dataset);
 		},
 		showProteinRegion: (state, action) => {
 			const [start, end] = proteinRegions[action.payload]

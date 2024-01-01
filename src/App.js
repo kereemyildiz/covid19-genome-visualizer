@@ -37,6 +37,9 @@ function App() {
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
 	);
+	const proteinRegionPossMap2 = useSelector(
+		(state) => state.genome.proteinRegionPossMap2
+	);
 
 	const windowSlices = useSelector((state) => state.genome.windowSlices);
 
@@ -98,7 +101,7 @@ function App() {
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
 								{/* <div className="w-[400px] h-[400px]">
-									<PieChart data={proteinRegionPossMap} />
+									<PieChart data={proteinRegionPossMap2} />
 								</div> */}
 							</div>
 						</div>
