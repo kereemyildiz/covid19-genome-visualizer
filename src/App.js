@@ -78,8 +78,9 @@ function App() {
 				elapsedDay,
 				selectedModel,
 			});
+			const { dataset, genome } = response.data;
 			console.log("res: ", response);
-			dispatch(setDataset(response.data));
+			dispatch(setDataset([dataset, genome]));
 		} catch (error) {
 			console.error("Error submitting the form", error);
 		}

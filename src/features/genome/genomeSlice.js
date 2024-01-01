@@ -43,16 +43,11 @@ export const genomeSlice = createSlice({
 		},
 		setDataset: (state, action) => {
 			console.log("burda", action.payload);
-			const data = action.payload;
-			state.seq = data[0][1].map((n_idx) => nucleotides[n_idx]);
-			let dataset = [];
-			for (const row of data) {
-				console.log("girdi");
-				console.log("row:", row[0]);
-				dataset.push(row[0].map((n) => parseFloat(n)));
-			}
-			state.realChartData = dataset;
-			state.proteinRegionPossMap2 = generateProteinRegionPossibility2(dataset);
+			const [data, genome] = action.payload;
+			state.seq = genome;
+
+			state.realChartData = data;
+			// state.proteinRegionPossMap2 = generateProteinRegionPossibility2(data);
 		},
 		showProteinRegion: (state, action) => {
 			const [start, end] = proteinRegions[action.payload]
