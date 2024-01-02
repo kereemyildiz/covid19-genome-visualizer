@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { FixedSizeList as List } from "react-window";
 
 // Row component for each item in the list
@@ -12,6 +12,7 @@ const Row = ({ data, index, style }) => {
 				cursor: "pointer",
 				padding: "5px",
 				borderBottom: "1px solid #ddd",
+				fontSize: "12px",
 			}}
 		>
 			{items[index]}
@@ -19,52 +20,64 @@ const Row = ({ data, index, style }) => {
 	);
 };
 
-function DropDown({ items }) {
-	const [searchTerm, setSearchTerm] = useState("");
+function DropDown({ items, setNodeId }) {
+	const [inputValue, setInputValue] = useState("");
 	const [selectedItem, setSelectedItem] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
 
 	const filteredItems = useMemo(() => {
-		// Ensure items is not null or undefined before filtering
 		return items
 			? items.filter((item) =>
-					item.toLowerCase().includes(searchTerm.toLowerCase())
+					item.toLowerCase().includes(inputValue.toLowerCase())
 			  )
 			: [];
-	}, [searchTerm, items]);
+	}, [inputValue, items]);
 
 	const onItemClick = useCallback((item) => {
 		setSelectedItem(item);
-		setSearchTerm(""); // Clear search term upon selection
+		setNodeId(item);
+		setInputValue(item);
 		setIsOpen(false);
 	}, []);
 
+	const onInputChange = useCallback(
+		(e) => {
+			setInputValue(e.target.value);
+			if (!selectedItem || e.target.value !== selectedItem) {
+				setIsOpen(true);
+				setSelectedItem("");
+				setNodeId(null);
+			}
+		},
+		[selectedItem]
+	);
+
+	useEffect(() => {
+		if (!isOpen) {
+			setInputValue(selectedItem);
+		}
+	}, [isOpen, selectedItem]);
+
 	return (
-		<div style={{ width: "900px", margin: "auto" }}>
+		<div className="mx-auto">
 			<input
+				required={true}
 				type="text"
-				value={selectedItem}
+				value={inputValue}
 				onFocus={() => setIsOpen(true)}
-				onChange={(e) => setSelectedItem(e.target.value)}
+				onChange={onInputChange}
 				placeholder="Select an item..."
-				readOnly
-				style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+				className="w-full p-3 mb-2 border-2 border-gray-300 focus:border-blue-500 rounded-md"
 			/>
 			{isOpen && (
-				<div>
-					<input
-						type="text"
-						autoFocus
-						placeholder="Type to search..."
-						onChange={(e) => setSearchTerm(e.target.value)}
-						style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-					/>
+				<div className="shadow-lg rounded-md">
 					<List
 						height={300}
+						width={500}
 						itemCount={filteredItems.length}
 						itemSize={35}
-						width={900}
 						itemData={{ items: filteredItems, onItemClick }}
+						className="rounded-b-md "
 					>
 						{Row}
 					</List>
@@ -73,5 +86,4 @@ function DropDown({ items }) {
 		</div>
 	);
 }
-
 export default DropDown;

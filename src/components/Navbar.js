@@ -38,7 +38,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 	return (
 		<div className="flex flex-col items-center sm:flex-row mt-2 justify-center ">
 			<form onSubmit={handleSubmit}>
-				<div className="flex flex-col px-2 pt-2 items-start w-[470px] sm:w-[440px] ">
+				<div className="flex flex-col  pt-2 items-start w-[500px] ">
 					<label
 						htmlFor="nodeId"
 						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
@@ -53,13 +53,24 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						onChange={(opt) => {
 							setSelectedModel(opt.value);
 						}}
-						className="rounded-md w-[440px]"
+						className="rounded-md w-[500px]"
 						options={modelList.map((model) => ({ label: model, value: model }))}
 						placeholder="Select Prediction Model"
 						name="model"
 					></Select>
 				</div>
-				<DropDown items={nodeIds} />
+				<div className="w-[500px] pt-2">
+					<label
+						htmlFor="nodeId"
+						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
+					>
+						Covid19 Variant Id{" "}
+						<span className="text-sm mb-1 text-red-300 font-semibold leading-1">
+							*
+						</span>
+					</label>
+					<DropDown items={nodeIds} setNodeId={setNodeId} />
+				</div>
 				<div className="flex  pt-2 ">
 					<div className="flex px-2 pt-2 flex-col items-start">
 						<label
