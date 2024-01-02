@@ -108,37 +108,37 @@ function App() {
 	};
 
 	return (
-		<div>{loading ? <Spinner /> : <DropDown items={nodeIds} />}</div>
-		// <div className="App">
-		// 	{loading ? (
-		// 		<Spinner />
-		// 	) : (
-		// 		<div>
-		// 			<Navbar onNodeSelect={handleNodeSelection} onSubmit={handleSubmit} />
-		// 			{realChartData ? (
-		// 				<div>
-		// 					{/* <RandomSequence /> */}
-		// 					<div className="flex justify-center gap-10 p-4">
-		// 						<div className="w-[800px] h-[400px]">
-		// 							<BarChart2 data={realChartData} seq={seq} />
-		// 						</div>
-		// 						{showDoughnut ? (
-		// 							<div className="w-[400px] h-[400px]">
-		// 								<PieChart data={proteinRegionPossMap} />
-		// 							</div>
-		// 						) : (
-		// 							""
-		// 						)}
-		// 					</div>
-		// 				</div>
-		// 			) : (
-		// 				<div>
-		// 					<div>Sequence is not generated yet</div>
-		// 				</div>
-		// 			)}
-		// 		</div>
-		// 	)}
-		// </div>
+		// <div>{loading ? <Spinner /> : <DropDown items={nodeIds} />}</div>
+		<div className="App">
+			{loading ? (
+				<Spinner />
+			) : (
+				<div>
+					<Navbar onNodeSelect={handleNodeSelection} onSubmit={handleSubmit} />
+					{realChartData ? (
+						<div>
+							{/* <RandomSequence /> */}
+							<div className="flex justify-center gap-10 p-4">
+								<div className="w-[800px] h-[400px]">
+									<BarChart2 data={realChartData} seq={seq} />
+								</div>
+								{showDoughnut ? (
+									<div className="w-[400px] h-[400px]">
+										<PieChart data={proteinRegionPossMap} />
+									</div>
+								) : (
+									""
+								)}
+							</div>
+						</div>
+					) : (
+						<div>
+							<div>Sequence is not generated yet</div>
+						</div>
+					)}
+				</div>
+			)}
+		</div>
 	);
 }
 

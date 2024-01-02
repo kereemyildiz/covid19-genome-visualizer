@@ -13,6 +13,7 @@ import Select from "react-select";
 import LoadingSpinner from "./Spinner";
 
 import { proteinRegions } from "../data/proteinRegions";
+import DropDown from "./DropDown";
 
 function Navbar({ onNodeSelect, onSubmit }) {
 	const nodeIds = useSelector((state) => state.genome.nodeList);
@@ -58,29 +59,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						name="model"
 					></Select>
 				</div>
-				<div className="flex  flex-col px-2 pt-2 items-start w-[470px] sm:w-[440px] ">
-					<label
-						htmlFor="nodeId"
-						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
-					>
-						Covid19 Variant Id{" "}
-						<span className="text-sm mb-1 text-red-300 font-semibold leading-1">
-							*
-						</span>
-					</label>
-					{/* Covid19 Variant Id (Enter country acronym, e.g., USA or year, e.g.,
-					2021) */}
-					<Select
-						required={true}
-						placeholder="Enter country acronym, e.g., USA or year, e.g.,
-					2021"
-						className="rounded-md w-[440px]"
-						options={nodes.map((opt) => ({ label: opt, value: opt }))}
-						onChange={(opt) => {
-							setNodeId(opt.value);
-						}}
-					/>
-				</div>
+				<DropDown items={nodeIds} />
 				<div className="flex  pt-2 ">
 					<div className="flex px-2 pt-2 flex-col items-start">
 						<label

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { FixedSizeList as List } from "react-window";
-import { useDispatch, useSelector } from "react-redux";
 
 // Row component for each item in the list
 const Row = ({ data, index, style }) => {
@@ -20,8 +19,7 @@ const Row = ({ data, index, style }) => {
 	);
 };
 
-function DropDown() {
-	const items = useSelector((state) => state.genome.nodeList) || [];
+function DropDown({ items }) {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedItem, setSelectedItem] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
