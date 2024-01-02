@@ -26,6 +26,7 @@ const initialState = {
 	realChartData: null,
 	proteinRegionPossMap2: null,
 	showDoughnut: false,
+	selectedProteinRegion: null,
 };
 
 export const genomeSlice = createSlice({
@@ -34,20 +35,20 @@ export const genomeSlice = createSlice({
 	reducers: {
 		generate: (state) => {
 			state.randomSeq = generateRandomSequence();
-			const output = main(state.randomSeq);
-			const _possMap = output[0];
-			state.possibilityMap = _possMap;
-			state.chartData = _possMap;
-			state.windowSlices = output[1];
+			// const output = main(state.randomSeq);
+			// const _possMap = output[0];
+			// state.possibilityMap = _possMap;
+			// state.chartData = _possMap;
+			// state.windowSlices = output[1];
 			// state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
-			console.log(state.chartData);
+			// console.log(state.chartData);
 		},
 		setDataset: (state, action) => {
 			console.log("burda", action.payload);
 			const [data, genome, pr_poss, isSelected] = action.payload;
 			state.seq = genome;
 			state.showDoughnut = false;
-
+			state.chartData = data;
 			state.realChartData = data;
 			if (!isSelected) {
 				state.showDoughnut = true;
@@ -59,13 +60,12 @@ export const genomeSlice = createSlice({
 			const [start, end] = proteinRegions[action.payload]
 				.split("-")
 				.map((pos) => parseInt(pos));
-			const possMap = current(state).possibilityMap;
-			console.log(possMap);
+			const chartData = current(state).chartData;
+			console.log(chartData);
 			state.chartTitle = action.payload;
-			state.chartData = possMap.filter(
-				(item) => item.pos >= start && item.pos <= end
-			);
+			state.realChartData = chartData.map((arr) => arr.slice(start, end + 1));
 			state.isWholeSequenceSelected = false;
+			state.selectedProteinRegion = action.payload;
 		},
 		selectNode: (state, action) => {
 			const [node, elapsedDay, model] = action.payload;
@@ -77,7 +77,7 @@ export const genomeSlice = createSlice({
 			console.log("model", model);
 		},
 		resetChart: (state) => {
-			state.chartData = current(state).possibilityMap;
+			state.realChartData = current(state).chartData;
 			state.isWholeSequenceSelected = true;
 			state.chartTitle = "Full Sequence";
 		},

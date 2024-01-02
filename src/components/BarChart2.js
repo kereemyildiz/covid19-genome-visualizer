@@ -11,6 +11,10 @@ function BarChart2({ data, seq }) {
 	const chartRef = useRef();
 	const dispatch = useDispatch();
 	const chartTitle = useSelector((state) => state.genome.chartTitle);
+	const isWholeSequenceSelected = useSelector(
+		(state) => state.genome.isWholeSequenceSelected
+	);
+
 	const [_chart, setChart] = useState(null);
 	const [click, setClick] = useState(false);
 	// const decimateData = (data, factor) => {
@@ -49,6 +53,8 @@ function BarChart2({ data, seq }) {
 	useEffect(() => {
 		const decimatedData = decimateData(data, 30); // Adjust factor as needed
 		const labels = seq.slice(0, decimatedData[0].length);
+		const label_indexes = labels.split("").map((_, idx) => idx);
+		console.log("lvlll", label_indexes);
 		// for (const row of data) {
 		// 	dataset.push(row.slice(0, 1000).map((num) => parseFloat(num)));
 		// }
@@ -73,7 +79,7 @@ function BarChart2({ data, seq }) {
 				const chart = new Chart(ctx, {
 					type: "bar",
 					data: {
-						labels: labels,
+						labels: label_indexes,
 						datasets: datasets,
 					},
 					options: {
