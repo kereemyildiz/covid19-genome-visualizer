@@ -107,7 +107,7 @@ function BarChart2({ data, seq }) {
 						// 	intersect: false,
 						// },
 						responsive: true,
-						maintainAspectRatio: true,
+						// maintainAspectRatio: true,
 						plugins: {
 							zoom: {
 								zoom: {
@@ -151,7 +151,10 @@ function BarChart2({ data, seq }) {
 	};
 
 	return (
-		<div>
+		<div
+			className="chart-container  "
+			style={{ height: "70vh", width: "70vw" }}
+		>
 			<button onClick={handleReset}>Reset</button>
 			<button onClick={() => setClick(!click)}> asd</button>
 			<canvas ref={chartRef} />

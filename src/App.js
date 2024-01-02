@@ -118,12 +118,12 @@ function App() {
 					{realChartData ? (
 						<div>
 							{/* <RandomSequence /> */}
-							<div className="flex justify-center gap-10 p-4">
-								<div className="w-[800px] h-[400px]">
+							<div className="flex justify-between p-4">
+								<div className="">
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
 								{showDoughnut ? (
-									<div className="w-[400px] h-[400px]">
+									<div className="flex items-center justify-center ">
 										<PieChart data={proteinRegionPossMap} />
 									</div>
 								) : (

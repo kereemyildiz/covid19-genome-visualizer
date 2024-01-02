@@ -84,9 +84,9 @@ const DoughnutChart = ({ data }) => {
 	};
 
 	return (
-		<div>
+		<div className="">
 			{/* <button>normalize</button> */}
-			<label className="relative inline-flex items-center cursor-pointer">
+			<label className=" inline-flex items-center cursor-pointer">
 				<input
 					onChange={handleNormalizedButton}
 					type="checkbox"
