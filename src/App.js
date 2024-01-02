@@ -21,13 +21,17 @@ import { proteinRegionsSize } from "./data/proteinRegions";
 import Navbar from "./components/Navbar";
 import axios from "axios";
 import BarChart2 from "./components/BarChart2";
+import DropDown from "./components/DropDown";
+import { nodeIds as nodes } from "./data/nodeIds";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
+	console.log("asdasdasdad");
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
 	const possibilityMap = useSelector((state) => state.genome.possibilityMap);
 	const barChartData = useSelector((state) => state.genome.chartData);
 	const showDoughnut = useSelector((state) => state.genome.showDoughnut);
+	const nodeIds = useSelector((state) => state.genome.nodeList);
 
 	const realChartData = useSelector((state) => state.genome.realChartData);
 	const seq = useSelector((state) => state.genome.seq);
@@ -35,7 +39,7 @@ function App() {
 
 	const elapsedDay = useSelector((state) => state.genome.elapsedDay);
 	const nodeId = useSelector((state) => state.genome.nodeId);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
@@ -54,6 +58,7 @@ function App() {
 
 	useEffect(() => {
 		setLoading(true);
+		console.log("runnnnnnn");
 
 		async function fetchData() {
 			try {
@@ -68,6 +73,7 @@ function App() {
 		}
 		fetchData();
 		setLoading(false);
+		console.log(nodeIds);
 		dispatch(generate());
 	}, []);
 
@@ -102,36 +108,37 @@ function App() {
 	};
 
 	return (
-		<div className="App">
-			{loading ? (
-				<Spinner />
-			) : (
-				<div>
-					<Navbar onNodeSelect={handleNodeSelection} onSubmit={handleSubmit} />
-					{realChartData ? (
-						<div>
-							{/* <RandomSequence /> */}
-							<div className="flex justify-center gap-10 p-4">
-								<div className="w-[800px] h-[400px]">
-									<BarChart2 data={realChartData} seq={seq} />
-								</div>
-								{showDoughnut ? (
-									<div className="w-[400px] h-[400px]">
-										<PieChart data={proteinRegionPossMap} />
-									</div>
-								) : (
-									""
-								)}
-							</div>
-						</div>
-					) : (
-						<div>
-							<div>Sequence is not generated yet</div>
-						</div>
-					)}
-				</div>
-			)}
-		</div>
+		<div>{loading ? <Spinner /> : <DropDown items={nodeIds} />}</div>
+		// <div className="App">
+		// 	{loading ? (
+		// 		<Spinner />
+		// 	) : (
+		// 		<div>
+		// 			<Navbar onNodeSelect={handleNodeSelection} onSubmit={handleSubmit} />
+		// 			{realChartData ? (
+		// 				<div>
+		// 					{/* <RandomSequence /> */}
+		// 					<div className="flex justify-center gap-10 p-4">
+		// 						<div className="w-[800px] h-[400px]">
+		// 							<BarChart2 data={realChartData} seq={seq} />
+		// 						</div>
+		// 						{showDoughnut ? (
+		// 							<div className="w-[400px] h-[400px]">
+		// 								<PieChart data={proteinRegionPossMap} />
+		// 							</div>
+		// 						) : (
+		// 							""
+		// 						)}
+		// 					</div>
+		// 				</div>
+		// 			) : (
+		// 				<div>
+		// 					<div>Sequence is not generated yet</div>
+		// 				</div>
+		// 			)}
+		// 		</div>
+		// 	)}
+		// </div>
 	);
 }
 
