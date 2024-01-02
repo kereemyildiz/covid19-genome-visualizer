@@ -15,6 +15,15 @@ import LoadingSpinner from "./Spinner";
 import { proteinRegions } from "../data/proteinRegions";
 import DropDown from "./DropDown";
 
+const customStyles = {
+	placeholder: (provided) => ({
+		...provided,
+		color: "#BDC3D4", // Set your desired color
+		fontSize: "16px", // Set your desired font-size
+	}),
+	// ... You can add other custom styles for other parts of the select here
+};
+
 function Navbar({ onNodeSelect, onSubmit }) {
 	const nodeIds = useSelector((state) => state.genome.nodeList);
 	const dispatch = useDispatch();
@@ -57,9 +66,10 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						options={modelList.map((model) => ({ label: model, value: model }))}
 						placeholder="Select Prediction Model"
 						name="model"
+						styles={customStyles} // Apply the custom styles here
 					></Select>
 				</div>
-				<div className="w-[500px] pt-2">
+				<div className="w-[500px] pt-4">
 					<label
 						htmlFor="nodeId"
 						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
@@ -71,8 +81,8 @@ function Navbar({ onNodeSelect, onSubmit }) {
 					</label>
 					<DropDown items={nodeIds} setNodeId={setNodeId} />
 				</div>
-				<div className="flex  pt-2 ">
-					<div className="flex px-2 pt-2 flex-col items-start">
+				<div className="flex justify-between pt-2 ">
+					<div className="flex pr-4 pt-2 flex-col items-start">
 						<label
 							htmlFor="num"
 							className="text-sm mb-1 font-semibold leading-6 text-blue-600"
@@ -93,7 +103,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 							label="e.g., 120"
 						></Input>
 					</div>
-					<div className="flex flex-col px-2 pt-2 self-end  w-[470px] sm:w-[240px] ">
+					<div className="flex flex-col pt-2 self-end sm:w-[240px] ">
 						<label
 							htmlFor="nodeId"
 							className="text-sm mb-1 text-blue-600 font-semibold leading-6"
@@ -110,16 +120,17 @@ function Navbar({ onNodeSelect, onSubmit }) {
 								label: pr,
 								value: pr,
 							}))}
+							styles={customStyles} // Apply the custom styles here
 						></Select>
 					</div>
 				</div>
 
-				<div className="flex justify-center pr-2 py-4 w-[470px] ">
+				<div className="flex justify-center py-4 w-[500px] ">
 					<Button
 						color="blue"
 						variant="gradient"
 						type="submit"
-						className="flex justify-center w-[440px] gap-2"
+						className="flex justify-center w-[500px] gap-2"
 					>
 						<MdOutlineCreate className="h-4 w-4" /> Predict
 					</Button>

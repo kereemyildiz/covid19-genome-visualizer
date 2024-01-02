@@ -11,7 +11,7 @@ const Row = ({ data, index, style }) => {
 				...style,
 				cursor: "pointer",
 				padding: "5px",
-				borderBottom: "1px solid #ddd",
+				borderBottom: "1px solid #ccc",
 				fontSize: "12px",
 			}}
 		>
@@ -66,8 +66,9 @@ function DropDown({ items, setNodeId }) {
 				value={inputValue}
 				onFocus={() => setIsOpen(true)}
 				onChange={onInputChange}
-				placeholder="Select an item..."
-				className="w-full p-3 mb-2 border-2 border-gray-300 focus:border-blue-500 rounded-md"
+				placeholder="Enter country acronym, e.g., USA or year, e.g.,
+					2021"
+				className="w-full p-3 mb-2 border-2 hover:border-blue-400 focus:border-blue-500 rounded-md"
 			/>
 			{isOpen && (
 				<div className="shadow-lg rounded-md">
