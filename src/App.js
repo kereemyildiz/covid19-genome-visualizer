@@ -109,7 +109,7 @@ function App() {
 
 	return (
 		// <div>{loading ? <Spinner /> : <DropDown items={nodeIds} />}</div>
-		<div className="App">
+		<div className="App w-[100vw] h-[100vh]">
 			{loading ? (
 				<Spinner />
 			) : (
@@ -118,12 +118,12 @@ function App() {
 					{realChartData ? (
 						<div>
 							{/* <RandomSequence /> */}
-							<div className="flex justify-between p-4">
+							<div className="flex justify-evenly mt-10 pl-10">
 								<div className="">
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
 								{showDoughnut ? (
-									<div className="flex items-center justify-center ">
+									<div className="chart-container w-[500px]  pr-4 flex justify-center ">
 										<PieChart data={proteinRegionPossMap} />
 									</div>
 								) : (
@@ -132,9 +132,7 @@ function App() {
 							</div>
 						</div>
 					) : (
-						<div>
-							<div>Sequence is not generated yet</div>
-						</div>
+						""
 					)}
 				</div>
 			)}

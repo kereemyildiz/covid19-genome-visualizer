@@ -4,6 +4,8 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetChart } from "../features/genome/genomeSlice";
 import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
+import { GrPowerReset } from "react-icons/gr";
+import { Button } from "@material-tailwind/react";
 Chart.register(zoomPlugin);
 let nucleotides = { 0: "A", 1: "C", 2: "T", 3: "G" };
 
@@ -107,7 +109,7 @@ function BarChart2({ data, seq }) {
 						// 	intersect: false,
 						// },
 						responsive: true,
-						// maintainAspectRatio: true,
+						maintainAspectRatio: false,
 						plugins: {
 							zoom: {
 								zoom: {
@@ -151,12 +153,19 @@ function BarChart2({ data, seq }) {
 	};
 
 	return (
-		<div
-			className="chart-container  "
-			style={{ height: "70vh", width: "70vw" }}
-		>
-			<button onClick={handleReset}>Reset</button>
-			<button onClick={() => setClick(!click)}> asd</button>
+		<div className="chart-container" style={{ height: "50vh", width: "60vw" }}>
+			<div className=" ml-12">
+				<Button
+					color="blue"
+					variant="gradient"
+					type="submit"
+					className="flex gap-2 justify-center items-center"
+					onClick={handleReset}
+				>
+					<div>Reset Chart</div>
+					<GrPowerReset size={20} color="white" />
+				</Button>
+			</div>
 			<canvas ref={chartRef} />
 			<div className="flex">
 				<button

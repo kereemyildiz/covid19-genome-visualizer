@@ -45,9 +45,9 @@ function Navbar({ onNodeSelect, onSubmit }) {
 	};
 
 	return (
-		<div className="flex flex-col items-center sm:flex-row mt-2 justify-center ">
-			<form onSubmit={handleSubmit}>
-				<div className="flex flex-col  pt-2 items-start w-[500px] ">
+		<div className=" pt-4 flex flex-col items-center sm:flex-row mt-2 justify-center ">
+			<form className="navbar" onSubmit={handleSubmit}>
+				<div className="flex flex-col  pt-2 items-start w-[520px] ">
 					<label
 						htmlFor="nodeId"
 						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
@@ -62,14 +62,14 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						onChange={(opt) => {
 							setSelectedModel(opt.value);
 						}}
-						className="rounded-md w-[500px]"
+						className="rounded-md w-[520px] text-gray-900"
 						options={modelList.map((model) => ({ label: model, value: model }))}
 						placeholder="Select Prediction Model"
 						name="model"
 						styles={customStyles} // Apply the custom styles here
 					></Select>
 				</div>
-				<div className="w-[500px] pt-4">
+				<div className="w-[520px] pt-4">
 					<label
 						htmlFor="nodeId"
 						className="text-sm mb-1 text-blue-600 font-semibold leading-6"
@@ -81,7 +81,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 					</label>
 					<DropDown items={nodeIds} setNodeId={setNodeId} />
 				</div>
-				<div className="flex justify-between pt-2 ">
+				<div className="flex justify-between ">
 					<div className="flex pr-4 pt-2 flex-col items-start">
 						<label
 							htmlFor="num"
@@ -111,6 +111,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 							Select Protein Region{" "}
 						</label>
 						<Select
+							className="text-sm"
 							onChange={(opt) => {
 								setSelectedProteinRegion(opt.value);
 							}}
@@ -125,14 +126,14 @@ function Navbar({ onNodeSelect, onSubmit }) {
 					</div>
 				</div>
 
-				<div className="flex justify-center py-4 w-[500px] ">
+				<div className="flex justify-center py-4  w-[520px] ">
 					<Button
 						color="blue"
 						variant="gradient"
 						type="submit"
-						className="flex justify-center w-[500px] gap-2"
+						className="flex justify-center w-[520px] gap-2"
 					>
-						<MdOutlineCreate className="h-4 w-4" /> Predict
+						Predict <MdOutlineCreate className="h-4 w-4" />
 					</Button>
 				</div>
 			</form>

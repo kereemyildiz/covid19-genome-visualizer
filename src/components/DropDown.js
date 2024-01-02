@@ -74,7 +74,7 @@ function DropDown({ items, setNodeId }) {
 				<div className="shadow-lg rounded-md">
 					<List
 						height={300}
-						width={500}
+						width={520}
 						itemCount={filteredItems.length}
 						itemSize={35}
 						itemData={{ items: filteredItems, onItemClick }}

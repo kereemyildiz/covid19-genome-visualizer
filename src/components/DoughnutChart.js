@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { showProteinRegion } from "../features/genome/genomeSlice";
 import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
 import { proteinRegionsSize } from "../data/proteinRegions";
+import { Switch } from "@material-tailwind/react";
 
 const DoughnutChart = ({ data }) => {
 	const [normalized, setNormalized] = useState(false);
@@ -84,22 +85,14 @@ const DoughnutChart = ({ data }) => {
 	};
 
 	return (
-		<div className="">
-			{/* <button>normalize</button> */}
-			<label className=" inline-flex items-center cursor-pointer">
-				<input
-					onChange={handleNormalizedButton}
-					type="checkbox"
-					value=""
-					className="sr-only peer"
-				/>
-
-				<div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-500 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-				<span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-					Normalize
-				</span>
-			</label>
-			<Doughnut data={chartData} options={chartOptions} />;
+		<div className="w-[400px]">
+			<div className="flex justify-start items-center cursor-pointer">
+				<div className="ms-3 font-bold text-gray-700">Normalize</div>
+				<div className="pl-3 pt-1">
+					<Switch onClick={handleNormalizedButton} color="blue" />
+				</div>
+			</div>
+			<Doughnut data={chartData} options={chartOptions} />
 		</div>
 	);
 };

@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.App {
+	background-color: #f5f7f8; /* Light grey background for the whole app */
+	font-family: "Arial", sans-serif; /* Consistent font */
+}
+.navbar {
+	margin: 10px;
+	padding: 15px;
+	border-radius: 5px;
+	background-color: white;
+	border: 1px solid #e1e1e1;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.chart-container {
+	background-color: white;
+	border: 1px solid #e1e1e1;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+	margin: 10px;
+	padding: 15px;
+	border-radius: 5px;
+}
