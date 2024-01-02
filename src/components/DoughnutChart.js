@@ -46,6 +46,8 @@ const DoughnutChart = ({ data }) => {
 		}
 	});
 
+	console.log("percentages", percentages);
+
 	const chartData = {
 		labels: Object.keys(percentages),
 		datasets: [

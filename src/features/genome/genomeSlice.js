@@ -25,6 +25,7 @@ const initialState = {
 	seq: null,
 	realChartData: null,
 	proteinRegionPossMap2: null,
+	showDoughnut: false,
 };
 
 export const genomeSlice = createSlice({
@@ -38,15 +39,20 @@ export const genomeSlice = createSlice({
 			state.possibilityMap = _possMap;
 			state.chartData = _possMap;
 			state.windowSlices = output[1];
-			state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
+			// state.proteinRegionPossMap = generateProteinRegionPossibility(_possMap);
 			console.log(state.chartData);
 		},
 		setDataset: (state, action) => {
 			console.log("burda", action.payload);
-			const [data, genome] = action.payload;
+			const [data, genome, pr_poss, isSelected] = action.payload;
 			state.seq = genome;
+			state.showDoughnut = false;
 
 			state.realChartData = data;
+			if (!isSelected) {
+				state.showDoughnut = true;
+				state.proteinRegionPossMap = pr_poss;
+			}
 			// state.proteinRegionPossMap2 = generateProteinRegionPossibility2(data);
 		},
 		showProteinRegion: (state, action) => {

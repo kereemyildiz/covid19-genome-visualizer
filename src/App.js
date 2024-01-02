@@ -27,8 +27,11 @@ function App() {
 	const randomSeq = useSelector((state) => state.genome.randomSeq);
 	const possibilityMap = useSelector((state) => state.genome.possibilityMap);
 	const barChartData = useSelector((state) => state.genome.chartData);
+	const showDoughnut = useSelector((state) => state.genome.showDoughnut);
+
 	const realChartData = useSelector((state) => state.genome.realChartData);
 	const seq = useSelector((state) => state.genome.seq);
+	const [showAllData, setShowAllData] = useState(true);
 
 	const elapsedDay = useSelector((state) => state.genome.elapsedDay);
 	const nodeId = useSelector((state) => state.genome.nodeId);
@@ -68,19 +71,30 @@ function App() {
 		dispatch(generate());
 	}, []);
 
-	const handleSubmit = async (nodeId, elapsedDay, selectedModel) => {
+	const handleSubmit = async (
+		nodeId,
+		elapsedDay,
+		selectedModel,
+		selectedProteinRegion
+	) => {
 		setLoading(true);
 		console.log("11111");
-		console.log(nodeId, elapsedDay, selectedModel);
+		console.log(nodeId, elapsedDay, selectedModel, selectedProteinRegion);
 		try {
 			const response = await axios.post("http://localhost:8000/api/data/", {
 				nodeId,
 				elapsedDay,
 				selectedModel,
+				selectedProteinRegion,
 			});
-			const { dataset, genome } = response.data;
+			let isSelected = false;
+			if (selectedProteinRegion) {
+				setShowAllData(true);
+				isSelected = true;
+			}
+			const { dataset, genome, pr_poss } = response.data;
 			console.log("res: ", response);
-			dispatch(setDataset([dataset, genome]));
+			dispatch(setDataset([dataset, genome, pr_poss, isSelected]));
 		} catch (error) {
 			console.error("Error submitting the form", error);
 		}
@@ -101,9 +115,13 @@ function App() {
 								<div className="w-[800px] h-[400px]">
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
-								{/* <div className="w-[400px] h-[400px]">
-									<PieChart data={proteinRegionPossMap2} />
-								</div> */}
+								{showDoughnut ? (
+									<div className="w-[400px] h-[400px]">
+										<PieChart data={proteinRegionPossMap} />
+									</div>
+								) : (
+									""
+								)}
 							</div>
 						</div>
 					) : (
