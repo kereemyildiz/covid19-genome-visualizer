@@ -68,7 +68,7 @@ function DropDown({ items, setNodeId }) {
 				onChange={onInputChange}
 				placeholder="Enter country acronym, e.g., USA or year, e.g.,
 					2021"
-				className="w-full p-3 mb-2 border-2 hover:border-blue-400 focus:border-blue-500 rounded-md"
+				className="w-full p-3 mb-2 border-2 hover:border-blue-400 focus:border-blue-500 rounded-md input-placeholder"
 			/>
 			{isOpen && (
 				<div className="shadow-lg rounded-md">

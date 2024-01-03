@@ -19,7 +19,7 @@ const customStyles = {
 	placeholder: (provided) => ({
 		...provided,
 		color: "#BDC3D4", // Set your desired color
-		fontSize: "16px", // Set your desired font-size
+		fontSize: "14px", // Set your desired font-size
 	}),
 	// ... You can add other custom styles for other parts of the select here
 };
@@ -62,11 +62,11 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						onChange={(opt) => {
 							setSelectedModel(opt.value);
 						}}
-						className="rounded-md w-[520px] text-gray-900"
+						className="rounded-md w-[520px] text-gray-900 "
 						options={modelList.map((model) => ({ label: model, value: model }))}
 						placeholder="Select Prediction Model"
-						name="model"
 						styles={customStyles} // Apply the custom styles here
+						name="model"
 					></Select>
 				</div>
 				<div className="w-[520px] pt-4">
@@ -98,7 +98,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 							onChange={(e) => {
 								setElapsedDay(e.target.value);
 							}}
-							className="rounded-md h-[40px] w-[200px] border-black"
+							className="rounded-md h-[40px] w-[200px] border-black input-placeholder"
 							type="number"
 							label="e.g., 120"
 						></Input>
