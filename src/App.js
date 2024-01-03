@@ -26,6 +26,7 @@ import { nodeIds as nodes } from "./data/nodeIds";
 import ZoomSlider from "./components/ZoomSlider";
 import Progressbar from "./components/ProgressBar";
 import Recharts from "./components/Recharts";
+import GenomeChart from "./components/Recharts";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -130,7 +131,7 @@ function App() {
 		}
 		return data;
 	};
-	const genomeSequenceLength = 1000;
+	const genomeSequenceLength = 30000;
 
 	const [genomeSequence, setGenomeSequence] = useState(
 		generateRandomGenomeSequence(genomeSequenceLength)
@@ -144,7 +145,7 @@ function App() {
 		<div>
 			{console.log(genomeData, genomeSequence)}
 			<h1>Genome Sequence Mutation Visualization</h1>
-			<Recharts genomeData={genomeData} genomeSequence={genomeSequence} />
+			<GenomeChart genomeData={genomeData} genomeSequence={genomeSequence} />
 		</div>
 	);
 }
