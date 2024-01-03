@@ -62,7 +62,7 @@ function Navbar({ onNodeSelect, onSubmit }) {
 						onChange={(opt) => {
 							setSelectedModel(opt.value);
 						}}
-						className="rounded-md w-[520px] text-gray-900 "
+						className="rounded-md w-[520px] text-sm text-gray-900 "
 						options={modelList.map((model) => ({ label: model, value: model }))}
 						placeholder="Select Prediction Model"
 						styles={customStyles} // Apply the custom styles here

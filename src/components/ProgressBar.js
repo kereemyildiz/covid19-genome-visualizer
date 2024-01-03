@@ -20,7 +20,7 @@ export default function Progressbar() {
 	return (
 		<div className="grid h-screen place-items-center">
 			<div className="w-[400px] flex flex-col items-center">
-				<p className="mt-6 text-lg leading-8 text-gray-900 italic">
+				<p className="mt-6 text-md leading-8 text-gray-900 italic">
 					Predicting...
 				</p>
 				<Progress size="sm" value={filled} color="blue" />
