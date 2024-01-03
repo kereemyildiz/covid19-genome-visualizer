@@ -6,6 +6,7 @@ import { resetChart } from "../features/genome/genomeSlice";
 import { proteinRegionColorMap } from "../utils/proteinRegionColorMap";
 import { GrPowerReset } from "react-icons/gr";
 import { Button } from "@material-tailwind/react";
+import ZoomSlider from "./ZoomSlider";
 Chart.register(zoomPlugin);
 let nucleotides = { 0: "A", 1: "C", 2: "T", 3: "G" };
 
@@ -53,7 +54,7 @@ function BarChart2({ data, seq }) {
 	};
 
 	useEffect(() => {
-		const decimatedData = decimateData(data, 30); // Adjust factor as needed
+		const decimatedData = decimateData(data, 15); // Adjust factor as needed
 		const labels = seq.slice(0, decimatedData[0].length);
 		const label_indexes = labels.split("").map((_, idx) => idx);
 		console.log("lvlll", label_indexes);
@@ -152,22 +153,36 @@ function BarChart2({ data, seq }) {
 		dispatch(resetChart());
 	};
 
+	const handleZoom = (zoomLevel) => {
+		console.log("zoom:", zoomLevel);
+		_chart.zoom(zoomLevel);
+	};
+
 	return (
-		<div className="chart-container" style={{ height: "50vh", width: "60vw" }}>
-			<div className=" ml-12">
-				<Button
-					color="blue"
-					variant="gradient"
-					type="submit"
-					className="flex gap-2 justify-center items-center"
-					onClick={handleReset}
-				>
-					<div>Reset Chart</div>
-					<GrPowerReset size={20} color="white" />
-				</Button>
+		<div className="flex">
+			<div className="flex items-center justify-center chart-container">
+				<ZoomSlider handleZoom={handleZoom} />
 			</div>
-			<canvas ref={chartRef} />
-			<div className="flex">
+
+			<div
+				className="chart-container"
+				style={{ height: "50vh", width: "60vw" }}
+			>
+				<div className=" ml-12">
+					<Button
+						color="blue"
+						variant="gradient"
+						type="submit"
+						className="flex gap-2 justify-center items-center"
+						onClick={handleReset}
+					>
+						<div>Reset Chart</div>
+						<GrPowerReset size={20} color="white" />
+					</Button>
+				</div>
+
+				<canvas ref={chartRef} />
+				{/* <div className="flex">
 				<button
 					className="border-4 border-gray-400 m-2 p-2"
 					onClick={(e) => {
@@ -188,6 +203,7 @@ function BarChart2({ data, seq }) {
 					{" "}
 					-
 				</button>
+			</div> */}
 			</div>
 		</div>
 	);

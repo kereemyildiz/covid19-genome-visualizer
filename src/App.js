@@ -23,6 +23,8 @@ import axios from "axios";
 import BarChart2 from "./components/BarChart2";
 import DropDown from "./components/DropDown";
 import { nodeIds as nodes } from "./data/nodeIds";
+import ZoomSlider from "./components/ZoomSlider";
+import Progressbar from "./components/ProgressBar";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -40,6 +42,7 @@ function App() {
 	const elapsedDay = useSelector((state) => state.genome.elapsedDay);
 	const nodeId = useSelector((state) => state.genome.nodeId);
 	const [loading, setLoading] = useState(true);
+	const [dataLoading, setDataLoading] = useState(false);
 
 	const proteinRegionPossMap = useSelector(
 		(state) => state.genome.proteinRegionPossMap
@@ -83,7 +86,7 @@ function App() {
 		selectedModel,
 		selectedProteinRegion
 	) => {
-		setLoading(true);
+		setDataLoading(true);
 		console.log("11111");
 		console.log(nodeId, elapsedDay, selectedModel, selectedProteinRegion);
 		try {
@@ -104,13 +107,15 @@ function App() {
 		} catch (error) {
 			console.error("Error submitting the form", error);
 		}
-		setLoading(false);
+		setDataLoading(false);
 	};
 
 	return (
 		// <div>{loading ? <Spinner /> : <DropDown items={nodeIds} />}</div>
 		<div className="App w-[100vw] h-[100vh]">
-			{loading ? (
+			{dataLoading ? (
+				<Progressbar />
+			) : loading ? (
 				<Spinner />
 			) : (
 				<div>
@@ -119,11 +124,11 @@ function App() {
 						<div>
 							{/* <RandomSequence /> */}
 							<div className="flex justify-evenly mt-10 pl-10">
-								<div className="">
+								<div className="flex">
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
 								{showDoughnut ? (
-									<div className="chart-container w-[500px]  pr-4 flex justify-center ">
+									<div className="chart-container w-[500px] items-center pr-4 flex justify-center ">
 										<PieChart data={proteinRegionPossMap} />
 									</div>
 								) : (

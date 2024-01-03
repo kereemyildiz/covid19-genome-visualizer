@@ -22,3 +22,36 @@
 	padding: 15px;
 	border-radius: 5px;
 }
+
+.progressbar {
+	position: relative;
+	overflow: hidden;
+	width: 350px;
+	height: 35px;
+	border-radius: 5px;
+	background-color: #eee;
+}
+
+.zoom-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.zoom-slider {
+	writing-mode: bt-lr; /* IE */
+	-webkit-appearance: slider-vertical; /* WebKit */
+	width: 8px;
+	height: 300px; /* Adjust as needed */
+	margin: 10px 0;
+}
+
+.zoom-button {
+	background-color: #f1f1f1;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+	padding: 5px 10px;
+	margin: 2px;
+	font-size: 20px;
+}
