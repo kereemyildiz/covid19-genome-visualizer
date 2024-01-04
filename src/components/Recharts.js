@@ -1,115 +1,141 @@
-import React, { useState, useEffect } from "react";
-import Plot from "react-plotly.js";
+import React, { useEffect, useRef, useState } from "react";
+import * as echarts from "echarts/core";
+import { BarChart } from "echarts/charts";
+import {
+	TitleComponent,
+	TooltipComponent,
+	GridComponent,
+	DataZoomComponent,
+	ToolboxComponent,
+	LegendComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+
+echarts.use([
+	TitleComponent,
+	TooltipComponent,
+	GridComponent,
+	BarChart,
+	DataZoomComponent,
+	ToolboxComponent,
+	LegendComponent,
+	CanvasRenderer,
+]);
 
 const GenomeChart = ({ genomeData, genomeSequence }) => {
-	const [decimatedData, setDecimatedData] = useState([]);
-	const [currentView, setCurrentView] = useState({ start: 0, end: 1000 }); // Default view
-	const decimationFactor = 30; // Define the decimation factor
-	const zoomThreshold = 10; // Define a zoom threshold for switching between raw and decimated data
+	const chartRef = useRef(null);
+	const decimationFactor = 1;
+	const zoomThreshold = 10; // Define a zoom threshold
+	const [isZoomed, setIsZoomed] = useState(false);
 
 	useEffect(() => {
-		if (genomeData && genomeData.length > 0 && genomeSequence) {
-			const decimated = decimateData(genomeData, decimationFactor);
-			setDecimatedData(decimated);
-		}
-	}, [genomeData, genomeSequence]);
+		const chartInstance = echarts.init(chartRef.current);
+		chartInstance.setOption(
+			getChartOptions(
+				decimateData(genomeData, decimationFactor),
+				genomeSequence
+			)
+		);
+
+		const zoomHandler = (event) => {
+			handleZoom(event, chartInstance);
+		};
+
+		chartInstance.on("datazoom", zoomHandler);
+
+		return () => chartInstance.off("datazoom", zoomHandler);
+	}, [genomeData, genomeSequence, isZoomed]);
 
 	const decimateData = (data, factor) => {
-		const decimated = [];
-		for (let i = 0; i < data[0].length; i += factor) {
-			const chunk = data.map((d) => d.slice(i, i + factor));
-			const averagedChunk = chunk.map(
-				(d) => d.reduce((a, b) => a + b, 0) / factor
-			);
-			decimated.push(averagedChunk);
+		let length = Math.ceil(genomeSequence.length / factor);
+		let decimated = Array.from({ length }, () =>
+			new Array(data.length).fill(0)
+		);
+
+		for (let i = 0; i < genomeSequence.length; i++) {
+			let chunkIndex = Math.floor(i / factor);
+			for (let j = 0; j < data.length; j++) {
+				decimated[chunkIndex][j] += data[j][i] / factor;
+			}
 		}
 		return decimated;
 	};
 
-	const handleZoom = (event) => {
-		const xAxis = event["xaxis.range[0]"]
-			? Math.max(Math.floor(event["xaxis.range[0]"]), 0)
-			: 0;
-		const xAxisEnd = event["xaxis.range[1]"]
-			? Math.min(Math.ceil(event["xaxis.range[1]"]), genomeSequence.length)
-			: genomeSequence.length;
-		const zoomLevel = genomeSequence.length / (xAxisEnd - xAxis);
-
-		if (zoomLevel > zoomThreshold && xAxisEnd - xAxis < genomeSequence.length) {
-			setCurrentView({ start: xAxis, end: xAxisEnd });
-		} else {
-			setCurrentView({
-				start: 0,
-				end: genomeSequence.length / decimationFactor,
-			});
+	const handleZoom = (event, chartInstance) => {
+		const zoomScale =
+			chartInstance.getModel().option.dataZoom[0].end -
+			chartInstance.getModel().option.dataZoom[0].start;
+		console.log("a:", zoomScale);
+		if (zoomScale < zoomThreshold && !isZoomed) {
+			setIsZoomed(true);
+			chartInstance.setOption(getChartOptions(genomeData, genomeSequence));
+		} else if (zoomScale >= zoomThreshold && isZoomed) {
+			setIsZoomed(false);
+			chartInstance.setOption(
+				getChartOptions(
+					decimateData(genomeData, decimationFactor),
+					genomeSequence
+				)
+			);
 		}
 	};
-	const traces =
-		genomeData && genomeSequence && decimatedData.length > 0
-			? getTraces(currentView, genomeData, decimatedData, genomeSequence)
-			: [];
 
-	const layout = {
-		title: "Genome Sequence Mutation Visualization",
-		barmode: "stack",
-		xaxis: {
-			title: "Position",
-			rangeselector: {
-				buttons: [
-					{
-						count: 1,
-						label: "1m",
-						step: "month",
-						stepmode: "backward",
-					},
-					{
-						step: "all",
-					},
-				],
-			},
-			rangeslider: { range: [0, 1000] }, // Initial range for x-axis
-			type: "linear",
-		},
-		yaxis: {
-			fixedrange: false, // Allow y-axis range to change (enables vertical panning)
-			title: "Mutation Probability",
-		},
-		dragmode: "pan", // Enable panning by dragging
-	};
-	return (
-		<Plot
-			data={traces}
-			layout={layout}
-			onRelayout={handleZoom}
-			style={{ width: "100%", height: "100%" }}
-		/>
-	);
-};
-
-const getTraces = (view, rawGenomeData, decimatedData, genomeSequence) => {
-	if (!rawGenomeData || !decimatedData || !genomeSequence) {
-		return []; // Ensure that data is available
-	}
-
-	const nucleotides = ["A", "C", "G", "T"];
-	const useRawData = view.end - view.start < genomeSequence.length;
-	const data = useRawData ? rawGenomeData : decimatedData;
-	const xValues = useRawData
-		? Array.from(
-				{ length: view.end - view.start },
-				(_, i) => i + view.start + 1
-		  )
-		: Array.from({ length: data[0].length }, (_, i) => i + 1);
-
-	return nucleotides.map((nucleotide, index) => {
-		return {
-			x: xValues,
-			y: data[index],
+	const getChartOptions = (data, sequence) => {
+		const categories = Array.from(
+			{ length: data.length },
+			(_, i) => `Chunk ${i + 1}`
+		);
+		const series = ["A", "C", "G", "T"].map((nucleotide, idx) => ({
 			name: nucleotide,
 			type: "bar",
-			barmode: "stack",
+			stack: "total",
+			data: data.map((chunk) => chunk[idx]),
+		}));
+
+		return {
+			title: {
+				text: "Genome Mutation Probabilities",
+			},
+			tooltip: {
+				trigger: "axis",
+				axisPointer: {
+					type: "shadow",
+				},
+			},
+			legend: {
+				data: ["A", "C", "G", "T"],
+			},
+			grid: {
+				left: "3%",
+				right: "4%",
+				bottom: "3%",
+				containLabel: true,
+			},
+			xAxis: {
+				type: "category",
+				data: categories,
+			},
+			yAxis: {
+				type: "value",
+			},
+			series: series,
+			dataZoom: [
+				{
+					type: "slider",
+					show: true,
+					start: 0,
+					end: 10,
+				},
+				{
+					type: "inside",
+					start: 0,
+					end: 10,
+				},
+			],
 		};
-	});
+	};
+
+	return <div ref={chartRef} style={{ height: "400px", width: "100%" }} />;
 };
 
 export default GenomeChart;
