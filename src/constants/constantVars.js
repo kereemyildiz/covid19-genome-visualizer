@@ -1,4 +1,4 @@
-const nucleotides = ["A", "T", "G", "C"];
+const nucleotides = ["A", "C", "T", "G"];
 const windowSize = 5;
 const sequenceLength = 30000;
 

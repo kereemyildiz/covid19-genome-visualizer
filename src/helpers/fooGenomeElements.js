@@ -67,15 +67,33 @@ function windowPropagation(randomGenome, windowLength) {
 	return [possibilityMap, windowSliceArr];
 }
 
-function determineProteinRegion(index) {
+export const proteinRegionLabels = new Array(29904).map((_, idx) =>
+	determineProteinRegion(idx)
+);
+
+export function determineProteinRegion(index, decimateFactor = 1) {
 	for (const [protein, range] of Object.entries(proteinRegions)) {
 		const [start, end] = range.split("-").map(Number);
 
-		if (index >= start && index <= end) {
-			return `${protein} protein`;
+		if (index * decimateFactor >= start && index * decimateFactor <= end) {
+			return `${protein}`;
 		}
 	}
+	return "";
 }
+
+const calculateMidPoints = (regions) => {
+	return Object.entries(regions).map((item) => {
+		const [name, range] = item;
+		const [start, end] = range.split("-").map(Number);
+		return {
+			label: name,
+			position: parseInt(start + (end - start) / 2),
+		};
+	});
+};
+
+export const proteinMidPoints = calculateMidPoints(proteinRegions);
 
 function calculateMutationPoss(windowSlice) {
 	const mutationPoss = { A: 0, T: 0, G: 0, C: 0 };
