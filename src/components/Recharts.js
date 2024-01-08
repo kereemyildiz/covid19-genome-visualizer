@@ -42,8 +42,7 @@ const subLabels = {
 
 		subLabelText("ORF1ab", (width / 100) * 40);
 		subLabelText("S", (width / 100) * 78);
-		// subLabelText("ORF3a", (width / 100) * 78);
-		// subLabelText("ORF3a", (width / 100) * 78);
+		subLabelText("ORF3a", (width / 100) * 86);
 		// subLabelText("E", (width / 100) * 78);
 		// subLabelText("M", (width / 100) * 78);
 		// subLabelText("ORF6", (width / 100) * 78);
