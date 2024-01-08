@@ -9,6 +9,8 @@ import {
 	proteinRegionColorMapAnnotations,
 } from "../utils/proteinRegionColorMap";
 import SidePanel from "./SidePanel";
+import { Switch } from "@material-tailwind/react";
+import { getRelativePosition } from "chart.js/helpers";
 
 Chart.register(annotationPlugin);
 
@@ -16,6 +18,7 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 	const chartRef = useRef(null);
 	const [activeProtein, setActiveProtein] = useState(null);
 	const [chart, setChart] = useState(null);
+	const [showFullAnnotation, setshowFullAnnotation] = useState(false);
 
 	const decimateFactor = 15;
 	const decimatedData = genomeData.map((dataset) =>
@@ -29,80 +32,122 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 		}, [])
 	);
 
+	const annotations = Object.keys(proteinRegions).map((key) => {
+		const range = proteinRegions[key];
+		const [start, end] = range
+			.split("-")
+			.map((e) => parseInt(e / decimateFactor));
+
+		return {
+			display: true,
+			type: "box",
+			xMin: start,
+			xMax: end,
+			backgroundColor: proteinRegionColorMapAnnotations[key], // You can use different colors for each region
+			borderColor: proteinRegionColorMap[key],
+			borderWidth: 2,
+			label: {
+				content: key,
+				enabled: true,
+				position: "start",
+			},
+		};
+	});
+
 	useEffect(() => {
-		const ctx = chartRef.current.getContext("2d");
-		if (!ctx) return;
+		const timer = setTimeout(() => {
+			const ctx = chartRef.current.getContext("2d");
+			if (!ctx) return;
 
-		const labels = decimatedData[0].map((_, idx) => `Chunk ${idx}`);
+			if (chart) {
+				chart.destroy(); // Destroy existing chart instance before creating a new one
+			}
+			console.log("rendered");
 
-		const datasets = decimatedData.map((dataset, idx) => ({
-			label: nucleotides[idx],
-			data: dataset,
-			borderColor: getColorForNucleotide(nucleotides[idx]),
-			backgroundColor: getColorForNucleotide(nucleotides[idx]),
-		}));
+			const labels = decimatedData[0].map((_, idx) => `Chunk ${idx}`);
 
-		const data = {
-			labels: labels,
-			datasets: datasets,
-		};
+			const datasets = decimatedData.map((dataset, idx) => ({
+				label: nucleotides[idx],
+				data: dataset,
+				borderColor: getColorForNucleotide(nucleotides[idx]),
+				backgroundColor: getColorForNucleotide(nucleotides[idx]),
+			}));
 
-		const options = {
-			animation: false,
-			responsive: true,
-			scales: {
-				x: {
-					stacked: true,
-					ticks: {
-						font: {
-							weight: "bold",
+			const data = {
+				labels: labels,
+				datasets: datasets,
+			};
+
+			const options = {
+				animation: false,
+				responsive: true,
+				scales: {
+					x: {
+						stacked: true,
+						ticks: {
+							font: {
+								weight: "bold",
+							},
 						},
 					},
+					y: {
+						stacked: true,
+					},
 				},
-				y: {
-					stacked: true,
-				},
-			},
-			plugins: {
-				annotation: {
-					annotations: createAnnotations(activeProtein),
-				},
-				zoom: {
+				plugins: {
+					annotation: {
+						annotations: showFullAnnotation
+							? annotations
+							: createAnnotations(activeProtein),
+					},
 					zoom: {
-						wheel: {
-							enabled: true,
+						zoom: {
+							wheel: {
+								enabled: true,
+							},
+							pinch: {
+								enabled: true,
+							},
+							mode: "x",
 						},
-						pinch: {
+						pan: {
 							enabled: true,
+							mode: "x",
 						},
-						mode: "x",
-					},
-					pan: {
-						enabled: true,
-						mode: "x",
 					},
 				},
-			},
+			};
+
+			const chartInstance = new Chart(ctx, {
+				type: "bar",
+				data: data,
+				options: options,
+			});
+
+			setChart(chartInstance);
+
+			return () => chartInstance.destroy();
+		}, 100); // delay in milliseconds
+
+		return () => {
+			clearTimeout(timer);
+			if (chart) {
+				chart.destroy(); // Ensure cleanup if component unmounts
+			}
 		};
-
-		const chartInstance = new Chart(ctx, {
-			type: "bar",
-			data: data,
-			options: options,
-		});
-
-		setChart(chartInstance);
-
-		return () => chartInstance.destroy();
-	}, []);
+	}, [genomeData]);
 
 	useEffect(() => {
 		if (chart) {
-			chart.options.plugins.annotation.annotations =
-				createAnnotations(activeProtein);
+			if (showFullAnnotation) {
+				chart.options.plugins.annotation.annotations = annotations;
+			} else {
+				chart.options.plugins.annotation.annotations =
+					createAnnotations(activeProtein);
+			}
 			chart.update();
 		}
-	}, [activeProtein, chart]);
+	}, [activeProtein, showFullAnnotation]);
 
 	const createAnnotations = (activeProtein) => {
 		return Object.keys(proteinRegions).map((key) => {
@@ -136,15 +181,21 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 		setActiveProtein(null);
 	};
 
+	const handleshowFullAnnotation = () => {
+		setshowFullAnnotation((prev) => !prev);
+	};
 	return (
 		<div className="chart-container flex">
-			<SidePanel
-				proteinRegions={proteinRegions}
-				onProteinHover={handleProteinHover}
-				onProteinLeave={handleProteinLeave}
-			/>
-			<div className="chart-area">
+			<div className=" w-[100vw] h-[100vh]">
 				<canvas ref={chartRef} />
+			</div>
+			<div>
+				<SidePanel
+					proteinRegions={proteinRegions}
+					onProteinHover={handleProteinHover}
+					onProteinLeave={handleProteinLeave}
+					handleshowFullAnnotation={handleshowFullAnnotation}
+				/>
 			</div>
 		</div>
 	);
