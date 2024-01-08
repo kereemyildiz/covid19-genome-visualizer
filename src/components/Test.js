@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import Chart from "chart.js/auto";
-import "chartjs-adapter-date-fns"; // Import the date adapter
 import "chartjs-plugin-zoom";
 
 const ZoomChart = () => {
@@ -9,9 +8,6 @@ const ZoomChart = () => {
 
 	useEffect(() => {
 		const zoomOptions = {
-			limits: {
-				x: { min: "original", max: "original", minRange: 60 * 1000 },
-			},
 			pan: {
 				enabled: true,
 				mode: "x",
@@ -33,34 +29,19 @@ const ZoomChart = () => {
 			},
 		};
 
-		const start = new Date().valueOf();
-		const end = start + 1000 * 60 * 60 * 24 * 2;
-		const allData = [];
-		let y = 100;
-
-		for (let x = start; x <= end; x += 1000) {
-			y += 5 - Math.random() * 10;
-			allData.push({ x, y });
-		}
+		const allData = Array.from({ length: 30000 }, (_, index) => ({
+			x: index,
+			y: Math.random(),
+		}));
 
 		function fetchData(x1, x2) {
-			const step = Math.max(1, Math.round((x2 - x1) / 100000));
-			const data = [];
-			let i = 0;
-
-			while (i < allData.length && allData[i].x < x1) {
-				i++;
-			}
-
-			while (i < allData.length && allData[i].x <= x2) {
-				data.push(allData[i]);
-				i += step;
-			}
-			return data;
+			return allData.slice(x1, x2);
 		}
 
 		function startFetch({ chart }) {
-			const { min, max } = chart.scales.x;
+			let { min, max } = chart.scales.x;
+			min = parseInt(min);
+			max = parseInt(max);
 			clearTimeout(timer);
 			timer = setTimeout(() => {
 				console.log("Fetched data between " + min + " and " + max);
@@ -71,17 +52,14 @@ const ZoomChart = () => {
 		}
 
 		const config = {
-			type: "line",
+			type: "bar",
 			data: {
 				datasets: [
 					{
-						label: "My First dataset",
+						label: "Random Data",
 						borderColor: "red",
 						backgroundColor: "rgba(255, 0, 0, 0.1)",
-						pointBorderColor: "blue",
-						pointBackgroundColor: "rgba(0, 0, 255, 0.5)",
-						pointBorderWidth: 1,
-						data: fetchData(start, end),
+						data: fetchData(0, 500),
 					},
 				],
 			},
@@ -89,25 +67,22 @@ const ZoomChart = () => {
 				scales: {
 					x: {
 						position: "bottom",
-						min: start,
-						max: end,
-						type: "time",
+						type: "linear",
 						ticks: {
 							autoSkip: true,
 							autoSkipPadding: 50,
 							maxRotation: 0,
-						},
-						time: {
-							displayFormats: {
-								hour: "HH:mm",
-								minute: "HH:mm",
-								second: "HH:mm:ss",
+							callback: function (value) {
+								// Format the label
+								return `Position ${parseInt(value)}`;
 							},
 						},
 					},
 					y: {
 						type: "linear",
 						position: "left",
+						min: 0,
+						max: 1,
 					},
 				},
 				plugins: {
@@ -115,14 +90,7 @@ const ZoomChart = () => {
 					title: {
 						display: true,
 						position: "bottom",
-						text: "Zoom Status Placeholder",
-					},
-				},
-				transitions: {
-					zoom: {
-						animation: {
-							duration: 100,
-						},
+						text: "Zoomable Bar Chart",
 					},
 				},
 			},
@@ -133,7 +101,7 @@ const ZoomChart = () => {
 	}, []);
 
 	return (
-		<div>
+		<div className="w-[80vw] h-[80vh]">
 			<canvas ref={chartContainer} width="800" height="400"></canvas>
 		</div>
 	);

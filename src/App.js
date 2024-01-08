@@ -27,6 +27,7 @@ import ZoomSlider from "./components/ZoomSlider";
 import Progressbar from "./components/ProgressBar";
 import Recharts from "./components/Recharts";
 import GenomeChart from "./components/Recharts";
+import ZoomChart from "./components/Test";
 // import { generateRandomSequence } from "./helpers/fooGenomeElements";
 
 function App() {
@@ -146,6 +147,7 @@ function App() {
 			{console.log(genomeData, genomeSequence)}
 			<h1>Genome Sequence Mutation Visualization</h1>
 			<GenomeChart genomeData={genomeData} genomeSequence={genomeSequence} />
+			<ZoomChart />
 		</div>
 	);
 }
