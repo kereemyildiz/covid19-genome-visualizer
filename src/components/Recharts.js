@@ -11,6 +11,7 @@ import {
 import SidePanel from "./SidePanel";
 import { Switch } from "@material-tailwind/react";
 import { getRelativePosition } from "chart.js/helpers";
+let chunkView = true;
 
 Chart.register(annotationPlugin);
 function proteinRegionByPercentage() {
@@ -31,35 +32,37 @@ function proteinRegionByPercentage() {
 }
 console.log("asd:", proteinRegionByPercentage());
 
-const subLabels = {
-	id: "subLabels",
-	afterDatasetsDraw(chart, args, pluginOptions) {
-		const {
-			ctx,
-			chartArea: { left, right, top, bottom, width, height },
-		} = chart;
-		ctx.save();
+const subLabels = chunkView
+	? {
+			id: "subLabels",
+			afterDatasetsDraw(chart, args, pluginOptions) {
+				const {
+					ctx,
+					chartArea: { left, right, top, bottom, width, height },
+				} = chart;
+				ctx.save();
 
-		subLabelText("ORF1ab", (width / 100) * 40);
-		subLabelText("S", (width / 100) * 78);
-		subLabelText("ORF3a", (width / 100) * 86);
-		// subLabelText("E", (width / 100) * 78);
-		// subLabelText("M", (width / 100) * 78);
-		// subLabelText("ORF6", (width / 100) * 78);
-		// subLabelText("ORF7a", (width / 100) * 78);
-		// subLabelText("ORF7b", (width / 100) * 78);
-		// subLabelText("ORF8", (width / 100) * 78);
-		// subLabelText("N", (width / 100) * 78);
-		subLabelText("ORF10", (width / 100) * 97);
+				subLabelText("ORF1ab", (width / 100) * 40);
+				subLabelText("S", (width / 100) * 78);
+				subLabelText("ORF3a", (width / 100) * 86);
+				// subLabelText("E", (width / 100) * 78);
+				// subLabelText("M", (width / 100) * 78);
+				// subLabelText("ORF6", (width / 100) * 78);
+				// subLabelText("ORF7a", (width / 100) * 78);
+				// subLabelText("ORF7b", (width / 100) * 78);
+				// subLabelText("ORF8", (width / 100) * 78);
+				// subLabelText("N", (width / 100) * 78);
+				subLabelText("ORF10", (width / 100) * 97);
 
-		function subLabelText(text, x, y = 100) {
-			ctx.font = "bolder 12px sans-serif";
-			ctx.fillStyle = "rgba(102, 102, 102, 1)";
-			ctx.textAlign = "center";
-			ctx.fillText(text, x + left, bottom + y);
-		}
-	},
-};
+				function subLabelText(text, x, y = 100) {
+					ctx.font = "bolder 12px sans-serif";
+					ctx.fillStyle = "rgba(102, 102, 102, 1)";
+					ctx.textAlign = "center";
+					ctx.fillText(text, x + left, bottom + y);
+				}
+			},
+	  }
+	: "";
 Chart.register(subLabels);
 console.log(proteinRegionsSize);
 
@@ -80,6 +83,21 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 			return acc;
 		}, [])
 	);
+
+	const startFetch = ({ chart }) => {
+		console.log("AAAAAAAAAAAAAAAAAAAAAA");
+		let { min, max } = chart.scales.x;
+		console.log(min, max);
+	};
+
+	const fetchData = (min, max) => {
+		return genomeData.map((dataset, idx) => ({
+			label: nucleotides[idx],
+			data: dataset.slice(min, max),
+			borderColor: getColorForNucleotide(nucleotides[idx]),
+			backgroundColor: getColorForNucleotide(nucleotides[idx]),
+		}));
+	};
 
 	const annotations = Object.keys(proteinRegions).map((key) => {
 		const range = proteinRegions[key];
@@ -113,9 +131,9 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 			}
 			console.log("rendered");
 
-			const labels = decimatedData[0].map((_, idx) => `Chunk ${idx}`);
+			const decimatedLabels = decimatedData[0].map((_, idx) => `Chunk ${idx}`);
 
-			const datasets = decimatedData.map((dataset, idx) => ({
+			const decimatedDatasets = decimatedData.map((dataset, idx) => ({
 				label: nucleotides[idx],
 				data: dataset,
 				borderColor: getColorForNucleotide(nucleotides[idx]),
@@ -123,8 +141,8 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 			}));
 
 			const data = {
-				labels: labels,
-				datasets: datasets,
+				labels: decimatedLabels,
+				datasets: decimatedDatasets,
 			};
 
 			const options = {
@@ -136,6 +154,18 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 						ticks: {
 							font: {
 								weight: "bold",
+							},
+						},
+					},
+					x2: {
+						ticks: {
+							grid: {
+								display: false,
+							},
+
+							callback: function (val, index) {
+								const label = this.getLabelForValue(val);
+								return !chunkView ? genomeSequence[label] : "";
 							},
 						},
 					},
@@ -154,6 +184,11 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 							? annotations
 							: createAnnotations(activeProtein),
 					},
+
+					tooltip: {
+						enabled: false,
+					},
+
 					zoom: {
 						zoom: {
 							wheel: {
@@ -163,10 +198,36 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 								enabled: true,
 							},
 							mode: "x",
+							onZoomComplete: ({ chart }) => {
+								console.log("AAA");
+								console.log(chart.getZoomLevel());
+								console.log("BBB");
+								let { min, max } = chart.scales.x;
+								console.log(min, max);
+								if (chart.getZoomLevel() > 2.5) {
+									chunkView = false;
+									chart.data.datasets = fetchData(min * 15, (min + 100) * 15);
+									chart.data.labels = genomeSequence
+										.split("")
+										.map((_, idx) => idx)
+										.slice(min * 15, (min + 100) * 15);
+									chart.update();
+								} else {
+									if (!chunkView) {
+										chunkView = true;
+										console.log("CCC");
+										chart.data.datasets = decimatedDatasets;
+										chart.data.labels = decimatedLabels;
+
+										chart.update();
+									}
+								}
+							},
 						},
 						pan: {
 							enabled: true,
 							mode: "x",
+							onPanComplete: startFetch,
 						},
 					},
 				},
@@ -239,7 +300,7 @@ const GenomeChart = ({ genomeData, genomeSequence }) => {
 		setshowFullAnnotation((prev) => !prev);
 	};
 	return (
-		<div className="chart-container flex">
+		<div className="chart-container  flex">
 			<div className=" w-[100vw] h-[80vh]">
 				<canvas ref={chartRef} />
 			</div>

@@ -19,7 +19,7 @@ const SidePanel = ({
 	handleshowFullAnnotation,
 }) => {
 	return (
-		<div className="mr-4">
+		<div className="mr-4 mt-12">
 			<Card className="w-60 ">
 				<div className="flex justify-center">
 					<Typography variant="h5" color="blue-gray" className="mb-2">
