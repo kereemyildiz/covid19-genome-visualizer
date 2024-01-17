@@ -85,7 +85,7 @@ const DoughnutChart = ({ data }) => {
 	};
 
 	return (
-		<div className="w-[400px]">
+		<div className="w-[360px]">
 			<div className="flex justify-start items-center cursor-pointer">
 				<div className="ms-3 font-bold text-gray-700">Normalize</div>
 				<div className="pl-3 pt-1">

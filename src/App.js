@@ -128,7 +128,7 @@ function App() {
 									<BarChart2 data={realChartData} seq={seq} />
 								</div>
 								{showDoughnut ? (
-									<div className="chart-container w-[500px] items-center pr-4 flex justify-center ">
+									<div className="chart-container w-[400px] items-center pr-4 flex justify-center ">
 										<PieChart data={proteinRegionPossMap} />
 									</div>
 								) : (
